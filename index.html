@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Village Super League | Pro Elite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --isl-navy: #001d3d; --isl-blue: #003566; --isl-gold: #ffc300;
+            --isl-white: #ffffff; --isl-red: #d90429; --isl-grey: #f4f4f9;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--isl-grey); color: var(--isl-navy); padding-bottom: 120px; }
+        
+        header { 
+            background: var(--isl-navy); padding: 15px; text-align: center; border-bottom: 4px solid var(--isl-gold);
+            position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .logo { font-family: 'Bebas Neue'; font-size: 32px; color: var(--isl-white); letter-spacing: 2px; }
+        .logo span { color: var(--isl-gold); }
+
+        .hero-card {
+            background: linear-gradient(135deg, var(--isl-navy) 0%, var(--isl-blue) 100%);
+            color: white; border-radius: 0 0 25px 25px; padding: 30px 20px; text-align: center; margin-bottom: 20px;
+        }
+
+        .section { padding: 15px; max-width: 650px; margin: auto; }
+        .card { background: var(--isl-white); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid #ddd; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        
+        input { width: 100%; padding: 12px; margin: 5px 0; background: #f8f9fa; border: 2px solid #eee; color: var(--isl-navy); border-radius: 8px; font-weight: 600; }
+        .timer-hud { font-family: 'Bebas Neue'; font-size: 70px; color: var(--isl-gold); display: block; line-height: 1; }
+        .time-setter { background: rgba(255,255,255,0.1); border: 1px solid var(--isl-gold); color: white; width: 60px; text-align: center; border-radius: 5px; font-weight: bold; margin-bottom: 10px; }
+        .score-display { font-family: 'Bebas Neue'; font-size: 65px; color: var(--isl-navy); background: transparent; border: none; text-align: center; width: 75px; }
+
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 13px; transition: 0.2s; }
+        .btn-main { background: var(--isl-gold); color: var(--isl-navy); box-shadow: 0 4px 0 #c79a00; }
+        .btn-whatsapp { background: #25D366; color: white; margin-top: 10px; border-bottom: 4px solid #128C7E; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-save { background: #2ecc71; color: white; margin-top: 10px; border-bottom: 4px solid #27ae60; }
+        .btn-load { background: #3498db; color: white; margin-top: 10px; border-bottom: 4px solid #2980b9; }
+        .btn-outline { background: transparent; border: 2px solid var(--isl-white); color: var(--isl-white); }
+        .btn-danger { background: var(--isl-red); color: white; margin-top: 15px; }
+
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--isl-navy); padding: 15px; display: flex; gap: 10px; border-top: 4px solid var(--isl-gold); z-index: 1001; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; margin-top: 10px; }
+        td, th { padding: 15px 12px; border-bottom: 1px solid #eee; font-weight: 600; font-size: 14px; }
+        .modal { position: fixed; inset: 0; background: var(--isl-grey); z-index: 2000; overflow-y: auto; display: none; }
+    </style>
+</head>
+<body>
+
+<header><div class="logo">VILLAGE <span>SUPER LEAGUE</span></div></header>
+
+<div id="loginView">
+    <div class="hero-card"><h1 style="font-family: 'Bebas Neue'; font-size: 45px;">MATCHDAY HUB</h1></div>
+    <section class="section">
+        <div class="card">
+            <input type="password" id="pin" placeholder="ENTER ACCESS PIN" style="text-align: center;">
+            <button class="btn btn-main" style="margin-top: 15px;" onclick="auth()">LOG IN</button>
+        </div>
+    </section>
+</div>
+
+<div id="dashboard" style="display: none;">
+    <div class="hero-card">
+        <div id="timerConfig" style="margin-bottom: 10px;">
+            <span style="font-size: 10px; font-weight: bold;">SET MINUTES:</span><br>
+            <input type="number" id="customMins" value="20" class="time-setter" onchange="updateCustomTime()">
+        </div>
+        <div class="timer-hud" id="timeDisp">20:00</div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn btn-outline" id="tBtn" onclick="ctrlTimer()">START</button>
+            <button class="btn btn-outline" style="width: 30%;" onclick="rstTimer()">RESET</button>
+        </div>
+    </div>
+
+    <section class="section">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; text-align: center;">
+                <div style="flex:1">
+                    <input type="text" id="tAName" placeholder="HOME TEAM" style="text-align: center; border: none; background: transparent; font-weight: 800; border-bottom: 1px dashed #ccc;">
+                    <input type="number" id="sA" value="0" class="score-display">
+                </div>
+                <div style="font-family: 'Bebas Neue'; font-size: 24px; color: #ddd;">VS</div>
+                <div style="flex:1">
+                    <input type="text" id="tBName" placeholder="AWAY TEAM" style="text-align: center; border: none; background: transparent; font-weight: 800; border-bottom: 1px dashed #ccc;">
+                    <input type="number" id="sB" value="0" class="score-display">
+                </div>
+            </div>
+            <button id="saveBtn" class="btn btn-main" style="margin-top: 25px;" onclick="saveMatch()">FINALIZE & AWARD 2 PTS</button>
+        </div>
+
+        <button class="btn btn-whatsapp" id="waBtn" onclick="shareWhatsApp()">📲 SHARE TABLE TO WHATSAPP</button>
+
+        <table><thead><tr><th>TEAM</th><th>P</th><th>W</th><th>L</th><th>PTS</th></tr></thead><tbody id="standingsBody"></tbody></table>
+
+        <div id="adminPanel" style="margin-top: 30px;">
+            <button class="btn btn-save" onclick="persistData()">💾 SAVE TO PHONE</button>
+            <button class="btn btn-load" onclick="loadData()">📂 LOAD DATA</button>
+            <button class="btn btn-danger" onclick="softReset()">CLEAR ALL DATA</button>
+        </div>
+    </section>
+
+    <div class="bottom-nav">
+        <button class="btn btn-outline" style="background: var(--isl-blue); font-size: 10px;" onclick="openM('rosMod')">SQUADS</button>
+        <button class="btn btn-outline" style="background: var(--isl-blue); font-size: 10px;" onclick="openM('statMod')">STATS</button>
+    </div>
+</div>
+
+<div id="rosMod" class="modal"><header><div class="league-logo">16-TEAM <span>REGISTRY</span></div></header><section class="section" id="rosCont"></section><div style="padding: 20px;"><button class="btn btn-main" onclick="closeM('rosMod')">SAVE & EXIT</button></div></div>
+<div id="statMod" class="modal"><header><div class="league-logo">MATCH <span>STATS</span></div></header><section class="section"><div class="card" id="cardLog">No matches played yet.</div></section><button class="btn btn-main" onclick="closeM('statMod')">CLOSE</button></div>
+
+<script>
+    let db = {}; let admin = false; let sec = 1200; let run = null;
+
+    function auth() {
+        const p = document.getElementById('pin').value;
+        if(p === "110710") { admin = true; start(); }
+        else if(p === "2026") { admin = false; start(); }
+        else { alert("Access Denied"); }
+    }
+
+    function start() {
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        if(!admin) {
+            document.querySelectorAll('#adminPanel, #saveBtn, #timerConfig, #waBtn').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('input').forEach(i => i.disabled = true);
+        }
+        buildRos();
+    }
+
+    function shareWhatsApp() {
+        let text = "*🏆 VILLAGE SUPER LEAGUE TABLE* \n\n";
+        text += "TEAM | P | W | L | *PTS* \n";
+        text += "------------------------------\n";
+        const sorted = Object.keys(db).sort((x,y) => db[y].pts - db[x].pts);
+        if (sorted.length === 0) return alert("No data!");
+        sorted.forEach(t => { const d = db[t]; text += `${t} | ${d.p} | ${d.w} | ${d.l} | *${d.pts}*\n`; });
+        window.open("https://wa.me/?text=" + encodeURIComponent(text), '_blank');
+    }
+
+    function persistData() {
+        const squads = []; document.querySelectorAll('#rosCont input').forEach(input => squads.push(input.value));
+        localStorage.setItem('islTournamentSave', JSON.stringify({ db, squads }));
+        alert("Tournament Saved!");
+    }
+
+    function loadData() {
+        const saved = JSON.parse(localStorage.getItem('islTournamentSave'));
+        if (saved) {
+            db = saved.db; const inputs = document.querySelectorAll('#rosCont input');
+            saved.squads.forEach((val, i) => { if(inputs[i]) inputs[i].value = val; });
+            updStandings(); alert("Data Loaded!");
+        } else alert("No Save Found.");
+    }
+
+    function softReset() { if(confirm("Wipe all data?")) { db = {}; updStandings(); buildRos(); localStorage.removeItem('islTournamentSave'); } }
+
+    function updateCustomTime() { if (!run) { sec = document.getElementById('customMins').value * 60; updateT(); } }
+    function ctrlTimer() { if (run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; } else { document.getElementById('tBtn').innerText = "PAUSE"; run = setInterval(() => { sec--; updateT(); if (sec <= 0) { clearInterval(run); alert("TIME UP!"); } }, 1000); } }
+    function updateT() { let m = Math.floor(sec / 60); let s = sec % 60; document.getElementById('timeDisp').innerText = `${m}:${s < 10 ? '0' : ''}${s}`; }
+    function rstTimer() { clearInterval(run); run = null; updateCustomTime(); document.getElementById('tBtn').innerText = "START"; }
+
+    function saveMatch() {
+        const ta = document.getElementById('tAName').value.toUpperCase() || "TEAM A";
+        const tb = document.getElementById('tBName').value.toUpperCase() || "TEAM B";
+        const sa = parseInt(document.getElementById('sA').value);
+        const sb = parseInt(document.getElementById('sB').value);
+        let win = sa > sb ? ta : (sb > sa ? tb : ta);
+        let lose = win === ta ? tb : ta;
+        [win, lose].forEach(t => { if(!db[t]) db[t] = {p:0, w:0, l:0, pts:0}; });
+        db[win].p++; db[win].w++; db[win].pts += 2; db[lose].p++; db[lose].l++;
+        updStandings(); rstEngine();
+    }
+
+    function updStandings() {
+        const b = document.getElementById('standingsBody'); b.innerHTML = "";
+        Object.keys(db).sort((x,y) => db[y].pts - db[x].pts).forEach(t => {
+            b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].w}</td><td>${db[t].l}</td><td style="color:var(--isl-blue); font-weight:800;">${db[t].pts}</td></tr>`;
+        });
+    }
+
+    function rstEngine() { ['sA','sB'].forEach(i => document.getElementById(i).value = 0); rstTimer(); }
+
+    function buildRos() {
+        const c = document.getElementById('rosCont'); c.innerHTML = "";
+        for(let t=1; t<=16; t++) {
+            let h = `<div class="card"><h3 style="color:var(--isl-blue); font-size: 14px;">TEAM ${t} REGISTRY</h3><input type="text" placeholder="ENTER CLUB NAME">`;
+            for(let i=1; i<=8; i++) { h += `<div style="display:flex; gap:5px;"><input type="text" placeholder="PLAYER ${i}" style="flex:2"><input type="text" placeholder="DOB" style="flex:1"></div>`; }
+            c.innerHTML += h + `</div>`;
+        }
+    }
+
+    function openM(id) { document.getElementById(id).style.display = 'block'; }
+    function closeM(id) { document.getElementById(id).style.display = 'none'; }
+</script>
+</body>
+</html>
