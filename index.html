@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APL / AFC World Hub</title>
+    <title>APL / AFC Master Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -13,19 +13,18 @@
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
         body { font-family: 'Montserrat', sans-serif; background: var(--afc-black); color: white; min-height: 100vh; padding-bottom: 120px; }
 
-        /* --- 📢 LIVE TICKER --- */
+        /* --- BROADCAST TICKER --- */
         .live-ticker {
             background: var(--afc-gold); color: black; padding: 10px 0; font-weight: 900; font-size: 11px;
             text-transform: uppercase; overflow: hidden; white-space: nowrap; position: sticky; top: 0; z-index: 1002;
+            border-bottom: 2px solid var(--neon-blue);
         }
         .ticker-move { display: inline-block; animation: scroll 25s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* --- 🏠 HOME PAGE --- */
         .home-view { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; min-height: 100vh; }
         .sponsor-logo { width: 170px; filter: drop-shadow(0 0 15px rgba(197,160,89,0.4)); margin-bottom: 20px; }
 
-        /* --- 🎮 DASHBOARD --- */
         #dashboard { display: none; }
         header { background: #0a0a0a; padding: 15px; text-align: center; border-bottom: 3px solid var(--afc-gold); }
         .timer-card { background: linear-gradient(180deg, #000, #1a472a); padding: 25px; text-align: center; border-bottom: 2px solid var(--afc-gold); }
@@ -35,12 +34,11 @@
         .card { background: var(--glass); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
         .score-display { font-family: 'Bebas Neue'; font-size: 75px; color: white; background: transparent; border: none; text-align: center; width: 85px; }
 
-        /* --- 📊 ANALYTICS BAR --- */
+        /* --- PROBABILITY BAR --- */
         .analytics-bar { height: 8px; background: #222; border-radius: 4px; margin: 15px 0; overflow: hidden; display: flex; border: 1px solid #333; }
         #probA { background: var(--neon-blue); width: 50%; transition: 0.8s ease; }
         #probB { background: var(--afc-gold); width: 50%; transition: 0.8s ease; }
 
-        /* --- 📋 TABLES & LOGS --- */
         table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
         th { background: #000; color: var(--afc-gold); padding: 12px; font-size: 10px; text-transform: uppercase; }
         td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; font-weight: 700; }
@@ -49,29 +47,29 @@
         .log-entry { border-bottom: 1px solid #333; padding: 5px 0; display: flex; justify-content: space-between; }
 
         .btn-gold { width: 100%; padding: 18px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; border-top: 4px solid var(--afc-gold); z-index: 1001; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 4px solid var(--afc-gold); z-index: 1001; }
         .nav-item { background: none; border: 1px solid #333; color: white; font-size: 9px; padding: 10px 2px; border-radius: 8px; font-weight: 800; }
 
-        .draw-panel { background: rgba(0,0,0,0.9); border: 2px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin-top: 15px; display: none; }
+        .draw-panel { background: rgba(0,0,0,0.95); border: 2px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin-top: 15px; display: none; }
     </style>
 </head>
 <body>
 
-<div class="live-ticker"><div class="ticker-move" id="tickerText">🏆 AJJOOR PREMIER LEAGUE 2026 • WORLD-CLASS ANALYTICS ENABLED • AJJOOR FOOTBALL CLUB (AFC) OFFICIAL HUB • 🏆</div></div>
+<div class="live-ticker"><div class="ticker-move" id="tickerText">🏆 AJJOOR PREMIER LEAGUE 2026 • OFFICIAL MATCH CENTER • ANALYTICS & PENALTY SYSTEMS ONLINE • 🏆</div></div>
 
 <div id="loginView" class="home-view">
     <img src="48981.jpg" alt="AFC Logo" class="sponsor-logo" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
     <div style="font-family:'Bebas Neue'; font-size:50px; color:var(--afc-gold);">APL / <span>AFC</span></div>
-    <div style="font-size: 10px; letter-spacing: 4px; color: #666; margin-top: 5px;">EST. 2026</div>
+    <div style="font-size: 10px; letter-spacing: 4px; color: #666; margin-top: 5px;">ELITE EDITION 2026</div>
 
     <div class="login-card" style="margin-top:25px; width:100%; max-width:350px;">
         <input type="password" id="pin" placeholder="ADMIN PIN" style="width:100%; padding:15px; text-align:center; background:rgba(0,0,0,0.6); border:1px solid var(--afc-gold); color:gold; border-radius:10px; margin-bottom:15px; font-family:'Bebas Neue'; font-size:18px;">
-        <button class="btn-gold" onclick="auth()">START MATCH CENTER</button>
+        <button class="btn-gold" onclick="auth()">OPEN HUB</button>
     </div>
 </div>
 
 <div id="dashboard">
-    <header><div style="font-family:'Bebas Neue'; font-size: 24px;">APL / <span>WORLD HUD</span></div></header>
+    <header><div style="font-family:'Bebas Neue'; font-size: 24px;">APL / <span>AFC HUB</span></div></header>
 
     <div class="timer-card">
         <div id="stageLabel" style="font-weight:900; color:var(--afc-gold); font-size:10px; margin-bottom:5px; letter-spacing:2px;">STADIUM READY</div>
@@ -107,14 +105,14 @@
             </div>
 
             <div id="drawPanel" class="draw-panel">
-                <h3 style="color:var(--neon-blue); font-size:12px; margin-bottom:15px; font-weight:900; text-align:center;">MATCH DRAWN! DECIDER:</h3>
+                <h3 style="color:var(--neon-blue); font-size:12px; margin-bottom:15px; font-weight:900; text-align:center;">MATCH DRAWN! DECIDE WINNER:</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="btn-gold" style="font-size:10px; background:var(--neon-blue);" onclick="triggerExtra()">+5M EXTRA</button>
-                    <button class="btn-gold" style="font-size:10px;" onclick="document.getElementById('pkBox').style.display='block'">PENALTIES</button>
+                    <button class="btn-gold" style="font-size:10px; background:var(--neon-blue);" onclick="triggerExtra()">+5M EXTRA TIME</button>
+                    <button class="btn-gold" style="font-size:10px;" onclick="document.getElementById('pkBox').style.display='block'">PENALTY SHOOTOUT</button>
                 </div>
-                <div id="pkBox" style="display:none; margin-top:15px; text-align:center;">
+                <div id="pkBox" style="display:none; margin-top:20px; text-align:center; border-top: 1px solid #333; padding-top: 15px;">
                     <input type="number" id="pA" value="0" style="width:60px; background:none; border:2px solid gold; color:white; font-size:24px; text-align:center;">
-                    <span style="font-family:'Bebas Neue'; margin:0 10px; color:var(--afc-gold);">PK SCORE</span>
+                    <span style="font-family:'Bebas Neue'; margin:0 10px; color:var(--afc-gold);">PK HUB</span>
                     <input type="number" id="pB" value="0" style="width:60px; background:none; border:2px solid gold; color:white; font-size:24px; text-align:center;">
                 </div>
             </div>
@@ -147,11 +145,11 @@
     function auth() { if(document.getElementById('pin').value === "110710" || document.getElementById('pin').value === "2026") { document.getElementById('loginView').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; load(); } else alert("DENIED"); }
 
     function calcProb() {
-        let sA = parseInt(document.getElementById('sA').value) || 0;
-        let sB = parseInt(document.getElementById('sB').value) || 0;
-        let weightA = 50 + (sA - sB) * 15;
+        let saValue = parseInt(document.getElementById('sA').value) || 0;
+        let sbValue = parseInt(document.getElementById('sB').value) || 0;
+        let weightA = 50 + (saValue - sbValue) * 15;
+        weightA = Math.min(Math.max(weightA, 5), 95); 
         let weightB = 100 - weightA;
-        weightA = Math.min(Math.max(weightA, 5), 95); weightB = 100 - weightA;
         document.getElementById('probA').style.width = weightA + "%";
         document.getElementById('probB').style.width = weightB + "%";
         document.getElementById('winProbText').innerText = `Win Probability: ${weightA}% - ${weightB}%`;
@@ -159,45 +157,60 @@
 
     function addCard(team, color) { if(color === 'Y') cards[team].y++; else cards[team].r++; alert(`${color === 'Y' ? 'Yellow' : 'Red'} Card recorded.`); }
 
-    function manualTimeEdit() { if(!run) { let m = prompt("Set Mins:"); if(m) { sec = m*60; updateT(); } } }
+    function manualTimeEdit() { if(!run) { let m = prompt("Set Mins:"); if(m) { sec = parseInt(m)*60; updateT(); } } }
 
     function ctrlTimer() {
         if (run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
-        else { document.getElementById('tBtn').innerText = "PAUSE"; run = setInterval(() => { sec--; updateT(); calcProb(); if (sec <= 0) { clearInterval(run); run = null; nextStage(); } }, 1000); }
+        else { 
+            document.getElementById('tBtn').innerText = "PAUSE"; 
+            run = setInterval(() => { 
+                sec--; updateT(); 
+                if (sec <= 0) { clearInterval(run); run = null; nextStage(); } 
+            }, 1000); 
+        }
     }
 
     function nextStage() {
+        let saValue = parseInt(document.getElementById('sA').value) || 0;
+        let sbValue = parseInt(document.getElementById('sB').value) || 0;
+        
         if(mStage === 1) { mStage = 2; sec = 120; document.getElementById('stageLabel').innerText = "HT BREAK"; }
         else if(mStage === 2) { mStage = 3; sec = 480; document.getElementById('stageLabel').innerText = "2ND HALF"; }
-        else { document.getElementById('stageLabel').innerText = "FULL TIME"; if(document.getElementById('sA').value === document.getElementById('sB').value) document.getElementById('drawPanel').style.display='block'; }
+        else { 
+            document.getElementById('stageLabel').innerText = "FULL TIME"; 
+            if(saValue === sbValue) document.getElementById('drawPanel').style.display='block'; 
+        }
         updateT(); document.getElementById('tBtn').innerText = "START";
     }
 
     function triggerExtra() { mStage = 4; sec = 300; document.getElementById('drawPanel').style.display = 'none'; updateT(); document.getElementById('stageLabel').innerText = "EXTRA TIME"; }
     
-    function updateT() { let m = Math.floor(sec/60), s = sec%60; document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; }
+    function updateT() { 
+        let m = Math.floor(sec/60), s = sec%60; 
+        document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; 
+    }
 
     function saveWorldMatch() {
         const ta = document.getElementById('tAName').value.toUpperCase() || "TEAM A";
         const tb = document.getElementById('tBName').value.toUpperCase() || "TEAM B";
-        const sa = parseInt(document.getElementById('sA').value) || 0;
-        const sb = parseInt(document.getElementById('sB').value) || 0;
-        const pa = parseInt(document.getElementById('pA').value) || 0;
-        const pb = parseInt(document.getElementById('pB').value) || 0;
+        const saValue = parseInt(document.getElementById('sA').value) || 0;
+        const sbValue = parseInt(document.getElementById('sB').value) || 0;
+        const paValue = parseInt(document.getElementById('pA').value) || 0;
+        const pbValue = parseInt(document.getElementById('pB').value) || 0;
 
         [ta, tb].forEach((t, i) => {
             const tk = i === 0 ? 'A' : 'B';
             if(!db[t]) db[t] = {p:0, w:0, gf:0, ga:0, pts:0, cards:0};
-            db[t].p++; db[t].gf += (i === 0 ? sa : sb); db[t].ga += (i === 0 ? sb : sa);
+            db[t].p++; db[t].gf += (i === 0 ? saValue : sbValue); db[t].ga += (i === 0 ? sbValue : saValue);
             db[t].cards += (cards[tk].y + (cards[tk].r * 2));
         });
 
-        let winner = "DRAW";
-        if(sa > sb || (sa === sb && pa > pb)) { db[ta].w++; db[ta].pts += 3; winner = ta; }
-        else if(sb > sa || (sa === sb && pb > pa)) { db[tb].w++; db[tb].pts += 3; winner = tb; }
+        let winnerText = "DRAW";
+        if(saValue > sbValue || (saValue === sbValue && paValue > pbValue)) { db[ta].w++; db[ta].pts += 3; winnerText = ta; }
+        else if(sbValue > saValue || (saValue === sbValue && pbValue > paValue)) { db[tb].w++; db[tb].pts += 3; winnerText = tb; }
 
         const log = document.getElementById('logContent');
-        log.innerHTML = `<div class="log-entry"><span>${ta} ${sa}-${sb} ${tb}</span><span>${winner}</span></div>` + log.innerHTML;
+        log.innerHTML = `<div class="log-entry"><span>${ta} ${saValue}-${sbValue} ${tb} ${paValue||pbValue ? '(PK '+paValue+'-'+pbValue+')' : ''}</span><span>${winnerText} WIN</span></div>` + log.innerHTML;
 
         upd(); fullRst();
     }
@@ -208,9 +221,17 @@
         sorted.forEach(t => { b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].w}</td><td>${db[t].gf-db[t].ga}</td><td>${db[t].cards}</td><td style="color:var(--afc-gold)">${db[t].pts}</td></tr>`; });
     }
 
-    function fullRst() { sec = 480; mStage = 1; updateT(); cards = {A:{y:0,r:0}, B:{y:0,r:0}}; ['sA','sB','pA','pB'].forEach(i => document.getElementById(i).value = 0); document.getElementById('drawPanel').style.display='none'; document.getElementById('pkBox').style.display='none'; }
-    function persist() { localStorage.setItem('apl_world_master', JSON.stringify(db)); alert("GLOBAL SYNC COMPLETE"); }
-    function load() { const d = localStorage.getItem('apl_world_master'); if(d) { db = JSON.parse(d); upd(); } }
+    function fullRst() { 
+        sec = 480; mStage = 1; updateT(); calcProb();
+        cards = {A:{y:0,r:0}, B:{y:0,r:0}}; 
+        ['sA','sB','pA','pB'].forEach(i => document.getElementById(i).value = 0); 
+        document.getElementById('drawPanel').style.display='none'; 
+        document.getElementById('pkBox').style.display='none'; 
+        document.getElementById('stageLabel').innerText = "STADIUM READY";
+    }
+    
+    function persist() { localStorage.setItem('apl_master_integrated', JSON.stringify(db)); alert("GLOBAL SYNC COMPLETE"); }
+    function load() { const d = localStorage.getItem('apl_master_integrated'); if(d) { db = JSON.parse(d); upd(); } }
     function softReset() { if(confirm("WIPE ALL DATA?")) { localStorage.clear(); location.reload(); } }
 </script>
 </body>
