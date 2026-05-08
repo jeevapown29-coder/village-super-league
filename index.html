@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APL / AFC</title>
+    <title>APL / AFC Elite Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root { 
             --afc-gold: #c5a059; --afc-black: #000000; --neon: #00f2ff;
-            --glass: rgba(255, 255, 255, 0.05); --win: #2ecc71;
+            --glass: rgba(255, 255, 255, 0.05);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
         body { font-family: 'Montserrat', sans-serif; background: var(--afc-black); color: white; min-height: 100vh; overflow-x: hidden; }
 
-        /* --- 📢 BROADCAST TICKER --- */
         .live-ticker {
             background: var(--afc-gold); color: black; padding: 10px 0; font-weight: 900; font-size: 11px;
             text-transform: uppercase; overflow: hidden; white-space: nowrap; position: sticky; top: 0; z-index: 1002;
@@ -23,7 +22,6 @@
         .ticker-move { display: inline-block; animation: scroll 25s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* --- PAGE SYSTEM --- */
         .page { display: none; padding-bottom: 120px; animation: fadeIn 0.4s ease; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -34,12 +32,14 @@
         .btn-gold { width: 100%; padding: 18px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
         .input-field { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--afc-gold); color: white; border-radius: 8px; margin-bottom: 10px; }
 
-        /* --- MATCH HUB --- */
-        .timer-card { background: linear-gradient(180deg, #000, #0a2e16); padding: 30px; text-align: center; border-bottom: 2px solid var(--afc-gold); }
+        /* --- DYNAMIC TIMER HUB --- */
+        .timer-card { background: linear-gradient(180deg, #000, #0a2e16); padding: 25px; text-align: center; border-bottom: 2px solid var(--afc-gold); }
         .timer-hud { font-family: 'Bebas Neue'; font-size: 85px; color: var(--afc-gold); line-height: 1; cursor: pointer; }
+        .time-selector { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
+        .time-btn { background: rgba(255,255,255,0.1); border: 1px solid #444; color: white; padding: 5px 12px; border-radius: 5px; font-size: 10px; font-weight: 800; cursor: pointer; }
+        .time-btn.active-time { background: var(--neon); color: black; border-color: var(--neon); }
+
         .score-display { font-family: 'Bebas Neue'; font-size: 70px; color: white; background: transparent; border: none; text-align: center; width: 80px; }
-        
-        /* --- ACCESS CONTROL --- */
         .admin-only { display: none; }
 
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 4px solid var(--afc-gold); z-index: 1001; }
@@ -56,16 +56,15 @@
 </head>
 <body>
 
-<div class="live-ticker"><div class="ticker-move">🏆 APL / AFC: LIVE HUB • SECURE DUAL-ACCESS SYSTEM ONLINE • 5+3 SQUAD FORMAT 🏆</div></div>
+<div class="live-ticker"><div class="ticker-move">🏆 APL / AFC: CUSTOM MATCH DURATION ENABLED • ADMIN: 111000 | GUEST: 2026 • 24/7 ONLINE 🏆</div></div>
 
 <div id="homePage" class="page active">
     <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-        <img src="48981.jpg" style="width:160px; margin-bottom:20px;" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
+        <img src="48981.jpg" style="width:150px; margin-bottom:20px;" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
         <div style="font-family:'Bebas Neue'; font-size:55px; color:var(--afc-gold); line-height:0.9;">APL / <span>AFC</span></div>
         <div class="card" style="margin-top:40px; width:320px;">
-            <input type="password" id="pin" placeholder="ENTER ACCESS CODE" class="input-field" style="text-align:center; font-size:18px;">
-            <button class="btn-gold" onclick="auth()">VERIFY ACCESS</button>
-            <p style="font-size: 10px; color: #444; margin-top: 15px;">Official Tournament Management Suite</p>
+            <input type="password" id="pin" placeholder="ACCESS CODE" class="input-field" style="text-align:center; font-size:18px;">
+            <button class="btn-gold" onclick="auth()">START HUB</button>
         </div>
     </div>
 </div>
@@ -75,7 +74,15 @@
     <div class="timer-card">
         <div id="stageLabel" style="font-weight:900; color:var(--afc-gold); font-size:10px;">STADIUM READY</div>
         <div class="timer-hud" id="timeDisp">08:00</div>
-        <div class="admin-only" id="timerControls" style="display: none; gap: 10px; justify-content: center; margin-top:15px;">
+        
+        <div class="admin-only time-selector" id="timeSelector">
+            <button class="time-btn" onclick="setBaseTime(300, this)">5 MIN</button>
+            <button class="time-btn active-time" onclick="setBaseTime(480, this)">8 MIN</button>
+            <button class="time-btn" onclick="setBaseTime(600, this)">10 MIN</button>
+            <button class="time-btn" onclick="setBaseTime(900, this)">15 MIN</button>
+        </div>
+
+        <div class="admin-only" id="timerControls" style="display: none; gap: 10px; justify-content: center; margin-top:20px;">
             <button onclick="ctrlTimer()" id="tBtn" class="btn-gold" style="width:120px; padding:10px;">START</button>
             <button onclick="fullRst()" class="btn-gold" style="width:60px; padding:10px; background:white;">↺</button>
         </div>
@@ -94,7 +101,7 @@
                     <input type="number" id="sB" value="0" class="score-display">
                 </div>
             </div>
-            <button class="btn-gold admin-only" id="saveMatchBtn" style="margin-top:20px; display:none;" onclick="saveMatch()">SAVE FINAL RESULT</button>
+            <button class="btn-gold admin-only" id="saveMatchBtn" style="margin-top:20px; display:none;" onclick="saveMatch()">SAVE RESULT</button>
         </div>
     </section>
 </div>
@@ -103,9 +110,9 @@
     <header>TOURNAMENT <span>DATA</span></header>
     <section class="section">
         <div class="card admin-only" id="scannerCard" style="display:none;">
-            <h3 style="color:var(--afc-gold); margin-bottom:10px;">RAPID SQUAD SCANNER</h3>
+            <h3 style="color:var(--afc-gold); margin-bottom:10px;">SQUAD SCANNER</h3>
             <input type="text" id="targetTeam" placeholder="TEAM NAME" class="input-field">
-            <button class="btn-gold" style="background:var(--neon);" onclick="openScanner()">⚡ START SCAN</button>
+            <button class="btn-gold" style="background:var(--neon);" onclick="openScanner()">⚡ RAPID SCAN (5+3)</button>
         </div>
 
         <table>
@@ -132,22 +139,21 @@
 </div>
 
 <script>
-    let db = {}; let squads = []; let userRole = 'guest'; let sec = 480; let run = null;
+    let db = {}; let squads = []; let userRole = 'guest'; 
+    let sec = 480; let baseSec = 480; let run = null;
     let videoStream = null; let isScanning = false;
 
     function auth() {
         const pin = document.getElementById('pin').value;
-        // ADMIN: 111000 | GUEST: 2026
         if(pin === "111000") { userRole = 'admin'; startApp(); }
         else if(pin === "2026") { userRole = 'guest'; startApp(); }
-        else alert("INVALID ACCESS CODE");
+        else alert("WRONG CODE");
     }
 
     function startApp() {
         document.getElementById('homePage').style.display = 'none';
         document.getElementById('matchPage').style.display = 'block';
         document.getElementById('mainNav').style.display = 'grid';
-        
         if(userRole === 'admin') {
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
             document.getElementById('saveMatchBtn').style.display = 'block';
@@ -166,10 +172,37 @@
         }
     }
 
-    // --- RAPID SCANNER ---
+    /* --- TIMER LOGIC --- */
+    function setBaseTime(s, btn) {
+        if(run) return alert("Stop timer first!");
+        baseSec = s; sec = s;
+        updateT();
+        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active-time'));
+        btn.classList.add('active-time');
+    }
+
+    function ctrlTimer() {
+        if(run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
+        else {
+            document.getElementById('tBtn').innerText = "PAUSE";
+            run = setInterval(() => { 
+                sec--; updateT(); 
+                if(sec<=0) { clearInterval(run); run = null; alert("TIME UP!"); } 
+            }, 1000);
+        }
+    }
+
+    function updateT() { 
+        let m = Math.floor(sec/60), s = sec%60; 
+        document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; 
+    }
+
+    function fullRst() { sec = baseSec; updateT(); clearInterval(run); run = null; document.getElementById('tBtn').innerText = "START"; }
+
+    /* --- DATA & SQUAD (Aadhar logic from previous version) --- */
     function openScanner() {
         const team = document.getElementById('targetTeam').value.toUpperCase();
-        if(!team) return alert("Enter team name first!");
+        if(!team) return alert("Enter team name!");
         document.getElementById('scannerOverlay').style.display = 'flex';
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
             videoStream = stream; document.getElementById('videoPreview').srcObject = stream;
@@ -199,28 +232,16 @@
             const team = document.getElementById('targetTeam').value.toUpperCase();
             const age = new Date().getFullYear() - new Date(dobStr.replace(/\//g, '-')).getFullYear();
             if(!squads.find(p => p.name === name)) {
-                squads.push({ team, name, dob: dobStr, age });
+                squads.push({ team, name, age });
                 if(navigator.vibrate) navigator.vibrate(200);
-                const count = squads.filter(p => p.team === team).length;
-                document.getElementById('scanCount').innerText = `${count} / 8`;
+                document.getElementById('scanCount').innerText = squads.filter(p => p.team === team).length + " / 8";
                 renderSquads(); persist();
-                if(count >= 8) closeScanner();
             }
         } catch(e) {}
     }
 
     function closeScanner() { isScanning = false; if(videoStream) videoStream.getTracks().forEach(t => t.stop()); document.getElementById('scannerOverlay').style.display = 'none'; }
 
-    // --- TIMER & MATCH ---
-    function ctrlTimer() {
-        if(run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
-        else {
-            document.getElementById('tBtn').innerText = "PAUSE";
-            run = setInterval(() => { sec--; updateT(); if(sec<=0){clearInterval(run);run=null;} }, 1000);
-        }
-    }
-    function updateT() { let m = Math.floor(sec/60), s = sec%60; document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; }
-    
     function saveMatch() {
         const ta = document.getElementById('tAName').value.toUpperCase();
         const tb = document.getElementById('tBName').value.toUpperCase();
@@ -229,7 +250,7 @@
         if(!db[ta]) db[ta] = {p:0, gf:0, ga:0, pts:0}; if(!db[tb]) db[tb] = {p:0, gf:0, ga:0, pts:0};
         db[ta].p++; db[tb].p++; db[ta].gf += sa; db[ta].ga += sb; db[tb].gf += sb; db[tb].ga += sa;
         if(sa > sb) db[ta].pts += 3; else if(sb > sa) db[tb].pts += 3;
-        updStandings(); persist();
+        updStandings(); persist(); fullRst();
     }
 
     function updStandings() {
@@ -248,8 +269,8 @@
         }
     }
 
-    function persist() { if(userRole === 'admin') localStorage.setItem('apl_master_v31', JSON.stringify({db, squads})); }
-    function load() { const d = JSON.parse(localStorage.getItem('apl_master_v31')); if(d) { db=d.db; squads=d.squads; updStandings(); renderSquads(); } }
+    function persist() { if(userRole === 'admin') localStorage.setItem('apl_final_v32', JSON.stringify({db, squads})); }
+    function load() { const d = JSON.parse(localStorage.getItem('apl_final_v32')); if(d) { db=d.db; squads=d.squads; updStandings(); renderSquads(); } }
 </script>
 </body>
 </html>
