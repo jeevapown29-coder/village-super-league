@@ -2,83 +2,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>APL / AFC Master Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>APL / AFC</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         :root { 
-            --afc-gold: #c5a059; --afc-black: #000000; --neon-blue: #00f2ff;
-            --glass: rgba(255, 255, 255, 0.05); --win: #2ecc71; --card-y: #f1c40f; --card-r: #e74c3c;
+            --afc-gold: #c5a059; --afc-black: #000000; --neon: #00f2ff;
+            --glass: rgba(255, 255, 255, 0.05); --win: #2ecc71;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--afc-black); color: white; min-height: 100vh; padding-bottom: 120px; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--afc-black); color: white; min-height: 100vh; overflow-x: hidden; }
 
-        /* --- BROADCAST TICKER --- */
+        /* --- 📢 BROADCAST TICKER --- */
         .live-ticker {
             background: var(--afc-gold); color: black; padding: 10px 0; font-weight: 900; font-size: 11px;
             text-transform: uppercase; overflow: hidden; white-space: nowrap; position: sticky; top: 0; z-index: 1002;
-            border-bottom: 2px solid var(--neon-blue);
+            border-bottom: 2px solid var(--neon);
         }
         .ticker-move { display: inline-block; animation: scroll 25s linear infinite; }
         @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .home-view { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; min-height: 100vh; }
-        .sponsor-logo { width: 170px; filter: drop-shadow(0 0 15px rgba(197,160,89,0.4)); margin-bottom: 20px; }
+        /* --- PAGE SYSTEM --- */
+        .page { display: none; padding-bottom: 120px; animation: fadeIn 0.4s ease; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        #dashboard { display: none; }
-        header { background: #0a0a0a; padding: 15px; text-align: center; border-bottom: 3px solid var(--afc-gold); }
-        .timer-card { background: linear-gradient(180deg, #000, #1a472a); padding: 25px; text-align: center; border-bottom: 2px solid var(--afc-gold); }
-        .timer-hud { font-family: 'Bebas Neue'; font-size: 90px; color: var(--afc-gold); line-height: 1; cursor: pointer; }
-        
+        /* --- UI COMPONENTS --- */
+        header { background: #0a0a0a; padding: 15px; text-align: center; border-bottom: 3px solid var(--afc-gold); font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 2px; }
         .section { padding: 15px; max-width: 650px; margin: auto; }
         .card { background: var(--glass); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .score-display { font-family: 'Bebas Neue'; font-size: 75px; color: white; background: transparent; border: none; text-align: center; width: 85px; }
+        .btn-gold { width: 100%; padding: 18px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+        .input-field { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--afc-gold); color: white; border-radius: 8px; margin-bottom: 10px; }
 
-        /* --- PROBABILITY BAR --- */
-        .analytics-bar { height: 8px; background: #222; border-radius: 4px; margin: 15px 0; overflow: hidden; display: flex; border: 1px solid #333; }
-        #probA { background: var(--neon-blue); width: 50%; transition: 0.8s ease; }
+        /* --- MATCH HUB --- */
+        .timer-card { background: linear-gradient(180deg, #000, #0a2e16); padding: 30px; text-align: center; border-bottom: 2px solid var(--afc-gold); }
+        .timer-hud { font-family: 'Bebas Neue'; font-size: 85px; color: var(--afc-gold); line-height: 1; cursor: pointer; }
+        .score-display { font-family: 'Bebas Neue'; font-size: 70px; color: white; background: transparent; border: none; text-align: center; width: 80px; }
+        .analytics-bar { height: 8px; background: #222; border-radius: 4px; margin: 15px 0; overflow: hidden; display: flex; }
+        #probA { background: var(--neon); width: 50%; transition: 0.8s ease; }
         #probB { background: var(--afc-gold); width: 50%; transition: 0.8s ease; }
 
-        table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
-        th { background: #000; color: var(--afc-gold); padding: 12px; font-size: 10px; text-transform: uppercase; }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; font-weight: 700; }
+        /* --- ⚡ RAPID SCANNER --- */
+        #scannerOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 5000; flex-direction: column; }
+        #videoPreview { width: 100%; height: 65vh; object-fit: cover; border-bottom: 4px solid var(--afc-gold); }
+        .scan-controls { padding: 20px; flex: 1; text-align: center; background: #0a0a0a; }
 
-        .log-box { height: 100px; overflow-y: auto; font-size: 11px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; margin-top: 15px; border: 1px solid #222; }
-        .log-entry { border-bottom: 1px solid #333; padding: 5px 0; display: flex; justify-content: space-between; }
-
-        .btn-gold { width: 100%; padding: 18px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+        /* --- NAVIGATION --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 4px solid var(--afc-gold); z-index: 1001; }
-        .nav-item { background: none; border: 1px solid #333; color: white; font-size: 9px; padding: 10px 2px; border-radius: 8px; font-weight: 800; }
+        .nav-item { background: none; border: 1px solid #333; color: white; font-size: 10px; padding: 10px; border-radius: 8px; font-weight: 800; text-align: center; }
+        .nav-item.active-nav { border-color: var(--afc-gold); color: var(--afc-gold); }
 
-        .draw-panel { background: rgba(0,0,0,0.95); border: 2px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin-top: 15px; display: none; }
+        table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
+        th { background: #000; color: var(--afc-gold); padding: 12px; font-size: 10px; }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; font-weight: 700; }
     </style>
 </head>
 <body>
 
-<div class="live-ticker"><div class="ticker-move" id="tickerText">🏆 AJJOOR PREMIER LEAGUE 2026 • OFFICIAL MATCH CENTER • ANALYTICS & PENALTY SYSTEMS ONLINE • 🏆</div></div>
+<div class="live-ticker"><div class="ticker-move" id="tickerText">🏆 APL / AFC: RAPID SCANNER & 5+3 FORMAT READY • REAL-TIME AGE AUTOMATION • 24/7 ONLINE 🏆</div></div>
 
-<div id="loginView" class="home-view">
-    <img src="48981.jpg" alt="AFC Logo" class="sponsor-logo" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
-    <div style="font-family:'Bebas Neue'; font-size:50px; color:var(--afc-gold);">APL / <span>AFC</span></div>
-    <div style="font-size: 10px; letter-spacing: 4px; color: #666; margin-top: 5px;">ELITE EDITION 2026</div>
-
-    <div class="login-card" style="margin-top:25px; width:100%; max-width:350px;">
-        <input type="password" id="pin" placeholder="ADMIN PIN" style="width:100%; padding:15px; text-align:center; background:rgba(0,0,0,0.6); border:1px solid var(--afc-gold); color:gold; border-radius:10px; margin-bottom:15px; font-family:'Bebas Neue'; font-size:18px;">
-        <button class="btn-gold" onclick="auth()">OPEN HUB</button>
+<div id="homePage" class="page active">
+    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+        <img src="48981.jpg" alt="Logo" style="width:160px; margin-bottom:20px;" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
+        <div style="font-family:'Bebas Neue'; font-size:55px; color:var(--afc-gold); line-height:0.9;">APL / <span>AFC</span></div>
+        <div style="font-size:10px; letter-spacing:5px; color:#555; margin-top:10px; font-weight:900;">ELITE MANAGEMENT HUB</div>
+        <div class="card" style="margin-top:40px; width:320px;">
+            <input type="password" id="pin" placeholder="ADMIN PIN" class="input-field" style="text-align:center; font-size:20px;">
+            <button class="btn-gold" onclick="auth()">START SESSION</button>
+        </div>
     </div>
 </div>
 
-<div id="dashboard">
-    <header><div style="font-family:'Bebas Neue'; font-size: 24px;">APL / <span>AFC HUB</span></div></header>
-
+<div id="matchPage" class="page">
+    <header>APL / AFC <span>LIVE HUB</span></header>
     <div class="timer-card">
-        <div id="stageLabel" style="font-weight:900; color:var(--afc-gold); font-size:10px; margin-bottom:5px; letter-spacing:2px;">STADIUM READY</div>
+        <div id="stageLabel" style="font-weight:900; color:var(--afc-gold); font-size:10px; letter-spacing:2px;">KICKOFF READY</div>
         <div class="timer-hud" id="timeDisp" onclick="manualTimeEdit()">08:00</div>
         <div class="analytics-bar"><div id="probA"></div><div id="probB"></div></div>
-        <div id="winProbText" style="font-size:9px; color:#aaa; margin-top:5px;">Win Probability: 50% - 50%</div>
+        <div id="winProbText" style="font-size:9px; color:#aaa; margin-top:5px;">WIN PROBABILITY: 50% - 50%</div>
         <div style="display: flex; gap: 10px; justify-content: center; margin-top:15px;">
-            <button onclick="ctrlTimer()" id="tBtn" style="background:var(--afc-gold); border:none; padding:10px 25px; border-radius:5px; font-weight:900;">START</button>
-            <button onclick="fullRst()" style="background:white; border:none; padding:10px 15px; border-radius:5px; font-weight:900;">↺</button>
+            <button onclick="ctrlTimer()" id="tBtn" class="btn-gold" style="width:120px; padding:10px;">START</button>
+            <button onclick="fullRst()" class="btn-gold" style="width:60px; padding:10px; background:white;">↺</button>
         </div>
     </div>
 
@@ -86,153 +91,202 @@
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; text-align: center;">
                 <div style="flex:1">
-                    <input type="text" id="tAName" placeholder="HOME" oninput="calcProb()" style="text-align: center; border: none; font-weight: 900; background: transparent; color: white; width: 100%; border-bottom: 2px solid var(--neon-blue); font-size:16px;">
+                    <input type="text" id="tAName" placeholder="TEAM A" oninput="calcProb()" class="input-field" style="text-align:center; border:none; border-bottom:2px solid var(--neon); font-weight:900;">
                     <input type="number" id="sA" value="0" class="score-display" oninput="calcProb()">
-                    <div style="display:flex; justify-content:center; gap:5px; margin-top:5px;">
-                        <button onclick="addCard('A','Y')" style="background:var(--card-y); border:none; width:20px; height:25px; border-radius:3px;"></button>
-                        <button onclick="addCard('A','R')" style="background:var(--card-r); border:none; width:20px; height:25px; border-radius:3px;"></button>
-                    </div>
                 </div>
-                <div style="font-family: 'Bebas Neue'; color: var(--afc-gold); font-size: 30px;">VS</div>
+                <div style="font-family:'Bebas Neue'; color:var(--afc-gold); font-size:30px;">VS</div>
                 <div style="flex:1">
-                    <input type="text" id="tBName" placeholder="AWAY" oninput="calcProb()" style="text-align: center; border: none; font-weight: 900; background: transparent; color: white; width: 100%; border-bottom: 2px solid var(--neon-blue); font-size:16px;">
+                    <input type="text" id="tBName" placeholder="TEAM B" oninput="calcProb()" class="input-field" style="text-align:center; border:none; border-bottom:2px solid var(--neon); font-weight:900;">
                     <input type="number" id="sB" value="0" class="score-display" oninput="calcProb()">
-                    <div style="display:flex; justify-content:center; gap:5px; margin-top:5px;">
-                        <button onclick="addCard('B','Y')" style="background:var(--card-y); border:none; width:20px; height:25px; border-radius:3px;"></button>
-                        <button onclick="addCard('B','R')" style="background:var(--card-r); border:none; width:20px; height:25px; border-radius:3px;"></button>
-                    </div>
                 </div>
             </div>
+            <button class="btn-gold" style="margin-top:20px;" onclick="saveMatch()">SAVE FINAL RESULT</button>
+        </div>
+    </section>
+</div>
 
-            <div id="drawPanel" class="draw-panel">
-                <h3 style="color:var(--neon-blue); font-size:12px; margin-bottom:15px; font-weight:900; text-align:center;">MATCH DRAWN! DECIDE WINNER:</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <button class="btn-gold" style="font-size:10px; background:var(--neon-blue);" onclick="triggerExtra()">+5M EXTRA TIME</button>
-                    <button class="btn-gold" style="font-size:10px;" onclick="document.getElementById('pkBox').style.display='block'">PENALTY SHOOTOUT</button>
-                </div>
-                <div id="pkBox" style="display:none; margin-top:20px; text-align:center; border-top: 1px solid #333; padding-top: 15px;">
-                    <input type="number" id="pA" value="0" style="width:60px; background:none; border:2px solid gold; color:white; font-size:24px; text-align:center;">
-                    <span style="font-family:'Bebas Neue'; margin:0 10px; color:var(--afc-gold);">PK HUB</span>
-                    <input type="number" id="pB" value="0" style="width:60px; background:none; border:2px solid gold; color:white; font-size:24px; text-align:center;">
-                </div>
-            </div>
-
-            <button class="btn-gold" style="margin-top: 25px;" onclick="saveWorldMatch()">SAVE FINAL RESULT</button>
-            
-            <div class="log-box">
-                <div style="color:var(--afc-gold); font-weight:900; margin-bottom:8px; font-size:10px;">RECENT MATCH HISTORY:</div>
-                <div id="logContent"></div>
-            </div>
+<div id="dataPage" class="page">
+    <header>AFC <span>DATABASE</span></header>
+    <section class="section">
+        <div class="card">
+            <h3 style="color:var(--afc-gold); margin-bottom:15px;">RAPID SQUAD SCANNER</h3>
+            <input type="text" id="targetTeam" placeholder="ENTER TEAM NAME TO SCAN" class="input-field">
+            <button class="btn-gold" style="background:var(--neon);" onclick="openScanner()">⚡ START 2-MIN RAPID SCAN</button>
         </div>
 
+        <div style="font-family:'Bebas Neue'; font-size:22px; color:var(--afc-gold); margin-bottom:10px;">STANDINGS</div>
         <table>
-            <thead><tr><th>TEAM</th><th>P</th><th>W</th><th>GD</th><th>FAIR</th><th style="color:var(--afc-gold)">PTS</th></tr></thead>
+            <thead><tr><th>TEAM</th><th>P</th><th>GD</th><th style="color:var(--afc-gold)">PTS</th></tr></thead>
             <tbody id="standingsBody"></tbody>
         </table>
-    </section>
 
-    <div class="bottom-nav">
-        <button class="nav-item" onclick="persist()">SYNC DATA</button>
-        <button class="nav-item" onclick="alert('Standings Copied')">SHARE</button>
-        <button class="nav-item" style="color:red;" onclick="softReset()">WIPE ALL</button>
+        <div id="squadList" style="margin-top:30px;"></div>
+    </section>
+</div>
+
+<div id="scannerOverlay">
+    <video id="videoPreview" autoplay playsinline></video>
+    <div class="scan-controls">
+        <div id="scanCount" style="font-family:'Bebas Neue'; font-size:40px; color:var(--neon);">0 / 8 PLAYERS</div>
+        <p style="font-size:12px; margin-bottom:15px;">Place Aadhaar QR in front of camera...</p>
+        <button class="btn-gold" style="background:white; color:black;" onclick="closeScanner()">FINISH SCAN</button>
     </div>
+    <canvas id="hiddenCanvas" style="display:none;"></canvas>
+</div>
+
+<div class="bottom-nav" id="mainNav" style="display: none;">
+    <button class="nav-item active-nav" onclick="showPage('matchPage', this)">MATCH HUB</button>
+    <button class="nav-item" onclick="showPage('dataPage', this)">DATABASE</button>
+    <button class="nav-item" style="color:red" onclick="softReset()">RESET</button>
 </div>
 
 <script>
-    let db = {}; let sec = 480; let run = null; let mStage = 1;
-    let cards = {A: {y:0, r:0}, B: {y:0, r:0}};
+    let db = {}; let squads = []; let sec = 480; let run = null; let mStage = 1;
+    let isScanning = false; let lastScanTime = 0; let videoStream = null;
 
-    function auth() { if(document.getElementById('pin').value === "110710" || document.getElementById('pin').value === "2026") { document.getElementById('loginView').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; load(); } else alert("DENIED"); }
-
-    function calcProb() {
-        let saValue = parseInt(document.getElementById('sA').value) || 0;
-        let sbValue = parseInt(document.getElementById('sB').value) || 0;
-        let weightA = 50 + (saValue - sbValue) * 15;
-        weightA = Math.min(Math.max(weightA, 5), 95); 
-        let weightB = 100 - weightA;
-        document.getElementById('probA').style.width = weightA + "%";
-        document.getElementById('probB').style.width = weightB + "%";
-        document.getElementById('winProbText').innerText = `Win Probability: ${weightA}% - ${weightB}%`;
+    function auth() {
+        if(document.getElementById('pin').value === "2026") {
+            showPage('matchPage');
+            document.getElementById('mainNav').style.display = 'grid';
+            load();
+        } else alert("WRONG PIN");
     }
 
-    function addCard(team, color) { if(color === 'Y') cards[team].y++; else cards[team].r++; alert(`${color === 'Y' ? 'Yellow' : 'Red'} Card recorded.`); }
+    function showPage(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if(el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+            el.classList.add('active-nav');
+        }
+    }
 
-    function manualTimeEdit() { if(!run) { let m = prompt("Set Mins:"); if(m) { sec = parseInt(m)*60; updateT(); } } }
+    // --- ⚡ RAPID SCANNER LOGIC ---
+    function openScanner() {
+        const team = document.getElementById('targetTeam').value.toUpperCase();
+        if(!team) return alert("Enter team name first!");
+        
+        document.getElementById('scannerOverlay').style.display = 'flex';
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
+            videoStream = stream;
+            document.getElementById('videoPreview').srcObject = stream;
+            isScanning = true;
+            requestAnimationFrame(scanTick);
+        });
+    }
+
+    function closeScanner() {
+        isScanning = false;
+        if(videoStream) videoStream.getTracks().forEach(t => t.stop());
+        document.getElementById('scannerOverlay').style.display = 'none';
+        document.getElementById('targetTeam').value = "";
+    }
+
+    function scanTick() {
+        if(!isScanning) return;
+        const video = document.getElementById('videoPreview');
+        if(video.readyState === video.HAVE_ENOUGH_DATA) {
+            const canvas = document.getElementById('hiddenCanvas');
+            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imgData.data, imgData.width, imgData.height);
+
+            if(code && Date.now() - lastScanTime > 2000) {
+                processQR(code.data);
+                lastScanTime = Date.now();
+            }
+        }
+        requestAnimationFrame(scanTick);
+    }
+
+    function processQR(data) {
+        try {
+            const name = (data.match(/name="([^"]+)"/) || data.match(/n="([^"]+)"/))[1];
+            const dobStr = (data.match(/dob="([^"]+)"/) || data.match(/d="([^"]+)"/))[1];
+            
+            const team = document.getElementById('targetTeam').value.toUpperCase();
+            
+            // Age calculation
+            const parts = dobStr.replace(/\//g, '-').split('-');
+            const finalDOB = parts[0].length === 4 ? `${parts[0]}-${parts[1]}-${parts[2]}` : `${parts[2]}-${parts[1]}-${parts[0]}`;
+            const bday = new Date(finalDOB);
+            const today = new Date();
+            let age = today.getFullYear() - bday.getFullYear();
+            
+            squads.push({ team, name, dob: finalDOB, age });
+            if(navigator.vibrate) navigator.vibrate(200);
+            
+            const count = squads.filter(p => p.team === team).length;
+            document.getElementById('scanCount').innerText = `${count} / 8 PLAYERS`;
+            
+            renderSquads();
+            persist();
+
+            if(count >= 8) { alert("Team Complete!"); closeScanner(); }
+        } catch(e) { console.log("Invalid QR"); }
+    }
+
+    function renderSquads() {
+        const div = document.getElementById('squadList'); div.innerHTML = "";
+        const groups = squads.reduce((r, a) => { r[a.team] = r[a.team] || []; r[a.team].push(a); return r; }, {});
+        for(let team in groups) {
+            let html = `<div class="card"><b style="color:var(--afc-gold)">${team}</b><hr style="opacity:0.1; margin:10px 0;">`;
+            groups[team].forEach((p, i) => {
+                html += `<div style="font-size:12px; margin-bottom:5px;">${i+1}. ${p.name} - <span style="color:var(--neon)">${p.age}y</span> [${i<5?'STARTER':'SUB'}]</div>`;
+            });
+            div.innerHTML += html + `</div>`;
+        }
+    }
+
+    // --- ANALYTICS & TIMER ---
+    function calcProb() {
+        let sA = parseInt(document.getElementById('sA').value) || 0;
+        let sB = parseInt(document.getElementById('sB').value) || 0;
+        let wA = 50 + (sA - sB) * 15;
+        wA = Math.min(Math.max(wA, 5), 95); 
+        document.getElementById('probA').style.width = wA + "%";
+        document.getElementById('probB').style.width = (100-wA) + "%";
+        document.getElementById('winProbText').innerText = `WIN PROBABILITY: ${wA}% - ${100-wA}%`;
+    }
 
     function ctrlTimer() {
-        if (run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
-        else { 
-            document.getElementById('tBtn').innerText = "PAUSE"; 
-            run = setInterval(() => { 
-                sec--; updateT(); 
-                if (sec <= 0) { clearInterval(run); run = null; nextStage(); } 
-            }, 1000); 
+        if(run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
+        else {
+            document.getElementById('tBtn').innerText = "PAUSE";
+            run = setInterval(() => { sec--; updateT(); if(sec<=0){clearInterval(run);run=null;nextStage();} }, 1000);
         }
     }
-
     function nextStage() {
-        let saValue = parseInt(document.getElementById('sA').value) || 0;
-        let sbValue = parseInt(document.getElementById('sB').value) || 0;
-        
         if(mStage === 1) { mStage = 2; sec = 120; document.getElementById('stageLabel').innerText = "HT BREAK"; }
         else if(mStage === 2) { mStage = 3; sec = 480; document.getElementById('stageLabel').innerText = "2ND HALF"; }
-        else { 
-            document.getElementById('stageLabel').innerText = "FULL TIME"; 
-            if(saValue === sbValue) document.getElementById('drawPanel').style.display='block'; 
-        }
-        updateT(); document.getElementById('tBtn').innerText = "START";
+        updateT();
     }
+    function updateT() { let m = Math.floor(sec/60), s = sec%60; document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; }
+    function manualTimeEdit() { if(!run) { let m = prompt("Set Mins:"); if(m) { sec = m*60; updateT(); } } }
 
-    function triggerExtra() { mStage = 4; sec = 300; document.getElementById('drawPanel').style.display = 'none'; updateT(); document.getElementById('stageLabel').innerText = "EXTRA TIME"; }
-    
-    function updateT() { 
-        let m = Math.floor(sec/60), s = sec%60; 
-        document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; 
-    }
-
-    function saveWorldMatch() {
+    // --- DATA ---
+    function saveMatch() {
         const ta = document.getElementById('tAName').value.toUpperCase() || "TEAM A";
         const tb = document.getElementById('tBName').value.toUpperCase() || "TEAM B";
-        const saValue = parseInt(document.getElementById('sA').value) || 0;
-        const sbValue = parseInt(document.getElementById('sB').value) || 0;
-        const paValue = parseInt(document.getElementById('pA').value) || 0;
-        const pbValue = parseInt(document.getElementById('pB').value) || 0;
-
-        [ta, tb].forEach((t, i) => {
-            const tk = i === 0 ? 'A' : 'B';
-            if(!db[t]) db[t] = {p:0, w:0, gf:0, ga:0, pts:0, cards:0};
-            db[t].p++; db[t].gf += (i === 0 ? saValue : sbValue); db[t].ga += (i === 0 ? sbValue : saValue);
-            db[t].cards += (cards[tk].y + (cards[tk].r * 2));
-        });
-
-        let winnerText = "DRAW";
-        if(saValue > sbValue || (saValue === sbValue && paValue > pbValue)) { db[ta].w++; db[ta].pts += 3; winnerText = ta; }
-        else if(sbValue > saValue || (saValue === sbValue && pbValue > paValue)) { db[tb].w++; db[tb].pts += 3; winnerText = tb; }
-
-        const log = document.getElementById('logContent');
-        log.innerHTML = `<div class="log-entry"><span>${ta} ${saValue}-${sbValue} ${tb} ${paValue||pbValue ? '(PK '+paValue+'-'+pbValue+')' : ''}</span><span>${winnerText} WIN</span></div>` + log.innerHTML;
-
-        upd(); fullRst();
+        const sa = parseInt(document.getElementById('sA').value) || 0;
+        const sb = parseInt(document.getElementById('sB').value) || 0;
+        if(!db[ta]) db[ta] = {p:0, gf:0, ga:0, pts:0};
+        if(!db[tb]) db[tb] = {p:0, gf:0, ga:0, pts:0};
+        db[ta].p++; db[tb].p++; db[ta].gf += sa; db[ta].ga += sb; db[tb].gf += sb; db[tb].ga += sa;
+        if(sa > sb) db[ta].pts += 3; else if(sb > sa) db[tb].pts += 3;
+        updStandings(); fullRst(); persist();
     }
-
-    function upd() {
+    function updStandings() {
         const b = document.getElementById('standingsBody'); b.innerHTML = "";
-        const sorted = Object.keys(db).sort((x,y) => db[y].pts - db[x].pts || (db[y].gf-db[y].ga) - (db[x].gf-db[x].ga) || db[x].cards - db[y].cards);
-        sorted.forEach(t => { b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].w}</td><td>${db[t].gf-db[t].ga}</td><td>${db[t].cards}</td><td style="color:var(--afc-gold)">${db[t].pts}</td></tr>`; });
+        const sorted = Object.keys(db).sort((x,y) => db[y].pts - db[x].pts || (db[y].gf-db[y].ga) - (db[x].gf-db[x].ga));
+        sorted.forEach(t => { b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].gf-db[t].ga}</td><td style="color:var(--afc-gold)">${db[t].pts}</td></tr>`; });
     }
-
-    function fullRst() { 
-        sec = 480; mStage = 1; updateT(); calcProb();
-        cards = {A:{y:0,r:0}, B:{y:0,r:0}}; 
-        ['sA','sB','pA','pB'].forEach(i => document.getElementById(i).value = 0); 
-        document.getElementById('drawPanel').style.display='none'; 
-        document.getElementById('pkBox').style.display='none'; 
-        document.getElementById('stageLabel').innerText = "STADIUM READY";
-    }
-    
-    function persist() { localStorage.setItem('apl_master_integrated', JSON.stringify(db)); alert("GLOBAL SYNC COMPLETE"); }
-    function load() { const d = localStorage.getItem('apl_master_integrated'); if(d) { db = JSON.parse(d); upd(); } }
-    function softReset() { if(confirm("WIPE ALL DATA?")) { localStorage.clear(); location.reload(); } }
+    function fullRst() { sec = 480; mStage = 1; updateT(); ['sA','sB'].forEach(i => document.getElementById(i).value = 0); }
+    function persist() { localStorage.setItem('apl_final_v29', JSON.stringify({db, squads})); }
+    function load() { const d = JSON.parse(localStorage.getItem('apl_final_v29')); if(d) { db=d.db; squads=d.squads; updStandings(); renderSquads(); } }
+    function softReset() { if(confirm("Wipe all data?")) { localStorage.clear(); location.reload(); } }
 </script>
 </body>
 </html>
