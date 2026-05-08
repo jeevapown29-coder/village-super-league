@@ -3,73 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VSL | 2026 Pro Elite</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <title>APL | Ultimate Knockout v18</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --isl-navy: #001d3d; --isl-blue: #003566; --isl-gold: #ffc300;
-            --isl-white: #ffffff; --isl-red: #d90429; --isl-bluecard: #007bff;
-            --isl-grey: #f4f4f9; --win: #2ecc71;
-        }
+        :root { --apl-gold: #ffc300; --neon-blue: #00f2ff; --glass: rgba(255, 255, 255, 0.1); }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--isl-grey); color: var(--isl-navy); padding-bottom: 160px; }
-        
-        /* 2026 LIVE TICKER */
-        .live-ticker {
-            background: var(--isl-gold); color: var(--isl-navy); padding: 8px 0;
-            font-size: 11px; font-weight: 800; overflow: hidden; white-space: nowrap;
-            border-bottom: 2px solid var(--isl-navy); position: sticky; top: 0; z-index: 1001;
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1510279750247-07759f6209f7?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover; background-attachment: fixed; color: white; padding-bottom: 160px;
         }
-        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .broadcast-ticker {
+            background: var(--apl-gold); color: black; padding: 10px 0; font-weight: 900; font-size: 11px;
+            text-transform: uppercase; overflow: hidden; white-space: nowrap; border-bottom: 3px solid var(--neon-blue);
+            position: sticky; top: 0; z-index: 1002;
+        }
+        .ticker-wrap { display: inline-block; animation: scrollText 30s linear infinite; }
+        @keyframes scrollText { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        header { background: var(--isl-navy); padding: 15px; text-align: center; border-bottom: 4px solid var(--isl-gold); }
-        .logo { font-family: 'Bebas Neue'; font-size: 30px; color: var(--isl-white); }
-        .logo span { color: var(--isl-gold); }
+        header { background: rgba(0,0,0,0.95); padding: 20px; text-align: center; border-bottom: 2px solid var(--apl-gold); }
+        .logo { font-family: 'Bebas Neue'; font-size: 35px; letter-spacing: 2px; }
+        .logo span { color: var(--apl-gold); }
 
-        .hero-card { background: linear-gradient(135deg, var(--isl-navy) 0%, var(--isl-blue) 100%); color: white; border-radius: 0 0 25px 25px; padding: 25px 15px; text-align: center; }
-        .timer-hud { font-family: 'Bebas Neue'; font-size: 70px; color: var(--isl-gold); text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-
+        .hero-card { background: rgba(0,0,0,0.6); padding: 25px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .timer-hud { font-family: 'Bebas Neue'; font-size: 90px; color: var(--apl-gold); line-height: 1; }
+        
         .section { padding: 15px; max-width: 650px; margin: auto; }
-        .card { background: var(--isl-white); border-radius: 15px; padding: 18px; margin-bottom: 15px; border: 1px solid #ddd; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-        .score-display { font-family: 'Bebas Neue'; font-size: 60px; color: var(--isl-navy); background: transparent; border: none; text-align: center; width: 75px; }
+        .score-display { font-family: 'Bebas Neue'; font-size: 70px; color: white; background: transparent; border: none; text-align: center; width: 85px; }
+        
+        .draw-panel { background: rgba(0,0,0,0.9); border: 2px solid var(--neon-blue); border-radius: 15px; padding: 20px; margin-top: 15px; display: none; }
+        .btn-gold { width: 100%; padding: 16px; background: var(--apl-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
 
-        /* 2026 RULE BADGES */
-        .rule-btn { font-size: 9px; font-weight: 800; padding: 8px; border-radius: 8px; border: none; cursor: pointer; text-transform: uppercase; color: white; }
-        .btn-blue { background: var(--isl-bluecard); }
-        .btn-red { background: var(--isl-red); }
-        .btn-gold { background: var(--isl-gold); color: var(--isl-navy); }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; border-top: 4px solid var(--apl-gold); z-index: 1001; }
+        .nav-item { background: rgba(255,255,255,0.05); color: white; padding: 12px 2px; font-size: 10px; border-radius: 10px; text-align: center; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--isl-navy); padding: 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; border-top: 4px solid var(--isl-gold); z-index: 1001; }
-        .nav-item { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: white; padding: 8px 2px; font-size: 8px; border-radius: 5px; text-align: center; }
-
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
-        td, th { padding: 12px 8px; border-bottom: 1px solid #eee; font-size: 11px; text-align: center; }
-        .modal { position: fixed; inset: 0; background: var(--isl-grey); z-index: 2000; overflow-y: auto; display: none; }
+        table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.8); border-radius: 15px; overflow: hidden; }
+        th { background: #000; color: var(--apl-gold); padding: 15px; font-size: 12px; font-family: 'Bebas Neue'; letter-spacing: 1px; }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 700; text-align: center; }
     </style>
 </head>
 <body>
 
-<div class="live-ticker">
-    <div class="ticker-move" id="tickerText">
-        ⚽ 2026 RULESET ACTIVE: BLUE CARD SIN-BINS ENABLED • 8-SECOND KEEPER RULE IN EFFECT • CAPTAINS-ONLY ZONES ACTIVE • RECORD GOALS LIVE! ⚽
+<div class="broadcast-ticker">
+    <div class="ticker-wrap" id="liveTicker">
+        🏆 AJJOOR PREMIER LEAGUE 2026 • 8-2-8 FORMAT • DRAW DETECTED? AUTOMATIC EXTRA TIME OR PENALTY OPTIONS ENABLED • 🏆
     </div>
 </div>
 
-<header><div class="logo">PRO ELITE <span>v7.0 (2026)</span></div></header>
+<header><div class="logo">APL <span>KNOCKOUT v18</span></div></header>
 
 <div id="loginView">
-    <div class="hero-card"><h1 style="font-family: 'Bebas Neue'; font-size: 40px;">TOURNAMENT ENGINE</h1></div>
-    <section class="section"><div class="card"><input type="password" id="pin" placeholder="ENTER ACCESS KEY" style="width:100%; padding:15px; text-align:center; border-radius:10px;"><button class="btn-gold" style="width:100%; padding:15px; margin-top:10px; border-radius:10px; font-weight:800;" onclick="auth()">UNLOCK ENGINE</button></div></section>
+    <section class="section">
+        <div class="card" style="text-align: center;">
+            <h2 style="font-family:'Bebas Neue'; color:var(--apl-gold); margin-bottom:20px;">ENGINE ACCESS</h2>
+            <input type="password" id="pin" placeholder="ADMIN PIN" style="width:100%; text-align:center; padding: 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--apl-gold); color: white; border-radius: 10px; margin-bottom: 15px;">
+            <button class="btn-gold" onclick="auth()">OPEN HUB</button>
+        </div>
+    </section>
 </div>
 
 <div id="dashboard" style="display: none;">
     <div class="hero-card">
-        <div class="timer-hud" id="timeDisp">20:00</div>
-        <div style="display: flex; gap: 8px; margin-top: 15px;">
-            <button class="nav-item" style="flex: 1; font-size: 12px;" onclick="ctrlTimer()">START/PAUSE</button>
-            <button class="nav-item" style="width: 25%; font-size: 12px;" onclick="rstTimer()">↺</button>
+        <div id="stageLabel" style="font-weight:900; color:var(--apl-gold); font-size:11px; letter-spacing:1px; margin-bottom:5px;">STADIUM READY</div>
+        <div class="timer-hud" id="timeDisp">08:00</div>
+        <div style="display: flex; gap: 10px; margin-top: 15px; justify-content: center;">
+            <button class="nav-item" style="width: 110px; color: var(--apl-gold); border-color: var(--apl-gold); font-size: 16px;" id="tBtn" onclick="ctrlTimer()">START</button>
+            <button class="nav-item" style="width: 60px; font-size: 16px;" onclick="fullRst()">↺</button>
         </div>
     </div>
 
@@ -77,133 +78,137 @@
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; text-align: center;">
                 <div style="flex:1">
-                    <input type="text" id="tAName" placeholder="HOME" style="text-align: center; border: none; font-weight: 800; width: 100%; border-bottom: 1px dashed #ccc;">
+                    <input type="text" id="tAName" placeholder="HOME" style="text-align: center; border: none; font-weight: 900; background: transparent; color: white; width: 100%; border-bottom: 2px solid var(--neon-blue); font-size: 16px;">
                     <input type="number" id="sA" value="0" class="score-display">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 10px;">
-                        <button class="rule-btn btn-gold" onclick="logE('A','GOAL')">GOAL</button>
-                        <button class="rule-btn btn-blue" onclick="logE('A','BLUE')">BLUE</button>
-                    </div>
                 </div>
-                <div style="font-family: 'Bebas Neue'; color: #ccc; font-size: 20px;">VS</div>
+                <div style="font-family: 'Bebas Neue'; color: var(--apl-gold); font-size: 30px;">VS</div>
                 <div style="flex:1">
-                    <input type="text" id="tBName" placeholder="AWAY" style="text-align: center; border: none; font-weight: 800; width: 100%; border-bottom: 1px dashed #ccc;">
+                    <input type="text" id="tBName" placeholder="AWAY" style="text-align: center; border: none; font-weight: 900; background: transparent; color: white; width: 100%; border-bottom: 2px solid var(--neon-blue); font-size: 16px;">
                     <input type="number" id="sB" value="0" class="score-display">
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 10px;">
-                        <button class="rule-btn btn-gold" onclick="logE('B','GOAL')">GOAL</button>
-                        <button class="rule-btn btn-blue" onclick="logE('B','BLUE')">BLUE</button>
+                </div>
+            </div>
+
+            <div id="drawPanel" class="draw-panel">
+                <h3 style="color:var(--neon-blue); font-size:12px; margin-bottom:15px; font-weight:900; text-align:center;">MATCH DRAWN! SELECT DECIDER:</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn-gold" style="font-size:10px; background:var(--neon-blue);" onclick="triggerExtra()">+5M EXTRA TIME</button>
+                    <button class="btn-gold" style="font-size:10px;" onclick="triggerPenalties()">PENALTY KICKS</button>
+                </div>
+                
+                <div id="penInput" style="display:none; margin-top:20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <div style="display: flex; justify-content: center; gap: 20px; align-items: center;">
+                        <input type="number" id="pA" value="0" style="width:60px; font-size:30px; text-align:center; background:none; border:2px solid var(--apl-gold); color:white; font-family:'Bebas Neue';">
+                        <span style="font-weight:900; font-family:'Bebas Neue'; color:var(--apl-gold);">PK</span>
+                        <input type="number" id="pB" value="0" style="width:60px; font-size:30px; text-align:center; background:none; border:2px solid var(--apl-gold); color:white; font-family:'Bebas Neue';">
                     </div>
                 </div>
             </div>
-            <button id="saveBtn" class="btn-gold" style="width:100%; padding:15px; margin-top:20px; border-radius:10px; font-weight:800;" onclick="saveMatch()">FINAL WHISTLE</button>
+
+            <button class="btn-gold" style="margin-top: 25px;" onclick="saveFinalMatch()">SAVE FINAL RESULT</button>
         </div>
 
-        <div style="font-family:'Bebas Neue'; font-size:22px; margin-bottom:10px;">ELITE STANDINGS</div>
+        <div style="font-family:'Bebas Neue'; font-size:28px; margin-bottom:10px; color: var(--apl-gold); text-align: center;">APL LEAGUE TABLE</div>
         <table>
-            <thead><tr><th>TEAM</th><th>P</th><th>W</th><th>GD</th><th style="color:var(--isl-blue)">PTS</th></tr></thead>
+            <thead><tr><th>TEAM</th><th>P</th><th>W</th><th>GD</th><th style="color:var(--apl-gold)">PTS</th></tr></thead>
             <tbody id="standingsBody"></tbody>
         </table>
     </section>
 
     <div class="bottom-nav">
-        <button class="nav-item" onclick="openM('rosMod')">SQUADS</button>
-        <button class="nav-item" onclick="openM('statMod')">SIN BIN</button>
-        <button class="nav-item" onclick="openM('bootMod')">BOOT</button>
+        <button class="nav-item" onclick="persistData()">SAVE DATA</button>
         <button class="nav-item" onclick="shareWA()">SHARE</button>
-        <button class="nav-item" style="background:var(--win)" onclick="persistData()">SAVE</button>
+        <button class="nav-item" style="color: #ff4d4d;" onclick="softReset()">WIPE</button>
     </div>
 </div>
 
-<div id="rosMod" class="modal"><header><div class="logo">2026 <span>SQUAD REGISTRY</span></div></header><section class="section" id="rosCont"></section><button class="btn-gold" style="width:100%; padding:15px;" onclick="closeM('rosMod')">SAVE & EXIT</button></div>
-<div id="bootMod" class="modal"><header><div class="logo">GOLDEN <span>BOOT 2026</span></div></header><section class="section"><div class="card"><table><thead><tr><th>PLAYER</th><th>GOALS</th></tr></thead><tbody id="bootBody"></tbody></table></div></section><button class="btn-gold" style="width:100%; padding:15px;" onclick="closeM('bootMod')">CLOSE</button></div>
-<div id="statMod" class="modal"><header><div class="logo">SIN BIN <span>TRACKER</span></div></header><section class="section" id="sinBinLog"></section><button class="btn-gold" style="width:100%; padding:15px;" onclick="closeM('statMod')">BACK</button></div>
-
 <script>
-    let db = {}; let scorers = {}; let blueBans = []; let admin = false; let sec = 1200; let run = null;
+    let db = {}; let sec = 480; let run = null; let matchStage = 1;
 
     function auth() {
-        const p = document.getElementById('pin').value;
-        if(p === "110710" || p === "2026") { admin = (p === "110710"); start(); }
-        else alert("Invalid Access Key");
+        if(document.getElementById('pin').value === "110710" || document.getElementById('pin').value === "2026") {
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        } else alert("INVALID ACCESS PIN");
     }
 
-    function start() {
-        document.getElementById('loginView').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        if(!admin) document.querySelectorAll('#saveBtn, button[onclick*="persist"], button[onclick*="logE"], #timerConfig').forEach(el => el.style.display = 'none');
-        buildRos();
-    }
-
-    function logE(side, type) {
-        if(!admin) return;
-        const p = prompt(`${type} for ${side}. Player Name:`);
-        if(p) {
-            if(type === 'GOAL') {
-                scorers[p] = (scorers[p] || 0) + 1;
-                document.getElementById(`s${side}`).value = parseInt(document.getElementById(`s${side}`).value) + 1;
-                document.getElementById('tickerText').innerText = `🔥 GOAL ALERT: ${p.toUpperCase()} SCORES! • `;
-            } else if (type === 'BLUE') {
-                blueBans.push({name: p, time: document.getElementById('timeDisp').innerText});
-                document.getElementById('sinBinLog').innerHTML += `<div class="card" style="border-left:8px solid var(--isl-bluecard)">🟦 BLUE CARD: ${p} (${document.getElementById('timeDisp').innerText}) - 2 MIN SIN BIN</div>`;
-                document.getElementById('tickerText').innerText = `⚠️ DISCIPLINE: ${p.toUpperCase()} SENT TO SIN BIN • `;
-            }
+    function ctrlTimer() {
+        if (run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
+        else {
+            document.getElementById('tBtn').innerText = "PAUSE";
+            run = setInterval(() => { 
+                sec--; updateT(); 
+                if (sec <= 0) { clearInterval(run); run = null; nextStage(); }
+            }, 1000);
         }
     }
 
-    function saveMatch() {
+    function nextStage() {
+        if(matchStage === 1) { 
+            matchStage = 2; sec = 120; document.getElementById('stageLabel').innerText = "HALF-TIME BREAK (2M)";
+        } else if(matchStage === 2) { 
+            matchStage = 3; sec = 480; document.getElementById('stageLabel').innerText = "2ND HALF (8M)";
+        } else if(matchStage === 3 || matchStage === 4) { 
+            document.getElementById('stageLabel').innerText = "MATCH OVER";
+            if(parseInt(document.getElementById('sA').value) === parseInt(document.getElementById('sB').value)) {
+                document.getElementById('drawPanel').style.display = 'block';
+                document.getElementById('liveTicker').innerText = "⚠️ DRAW DETECTED! DECISION REQUIRED: EXTRA TIME OR PENALTIES? ⚠️";
+            }
+        }
+        updateT();
+        document.getElementById('tBtn').innerText = "START";
+    }
+
+    function triggerExtra() {
+        matchStage = 4; sec = 300; // Automatic 5 min
+        document.getElementById('stageLabel').innerText = "EXTRA TIME (+5M)";
+        document.getElementById('drawPanel').style.display = 'none';
+        updateT();
+    }
+
+    function triggerPenalties() {
+        document.getElementById('penInput').style.display = 'block';
+        document.getElementById('liveTicker').innerText = "🔥 PENALTY SHOOTOUT IN PROGRESS • AJJOOR PREMIER LEAGUE 🔥";
+    }
+
+    function updateT() {
+        let m = Math.floor(sec/60); let s = sec%60;
+        document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function fullRst() { clearInterval(run); run = null; sec = 480; matchStage = 1; updateT(); document.getElementById('drawPanel').style.display = 'none'; document.getElementById('penInput').style.display = 'none'; document.getElementById('stageLabel').innerText = "STADIUM READY"; }
+
+    function saveFinalMatch() {
         const ta = document.getElementById('tAName').value.toUpperCase() || "TEAM A";
         const tb = document.getElementById('tBName').value.toUpperCase() || "TEAM B";
         const sa = parseInt(document.getElementById('sA').value);
         const sb = parseInt(document.getElementById('sB').value);
+        const pa = parseInt(document.getElementById('pA').value);
+        const pb = parseInt(document.getElementById('pB').value);
 
         [ta, tb].forEach(t => { if(!db[t]) db[t] = {p:0, w:0, gf:0, ga:0, pts:0}; });
         db[ta].p++; db[tb].p++;
         db[ta].gf += sa; db[ta].ga += sb;
         db[tb].gf += sb; db[tb].ga += sa;
 
-        if(sa > sb) { db[ta].w++; db[ta].pts += 3; }
-        else if(sb > sa) { db[tb].w++; db[tb].pts += 3; }
-        else { db[ta].pts += 1; db[tb].pts += 1; }
+        // Points only for winner
+        if(sa > sb || (sa === sb && pa > pb)) { db[ta].w++; db[ta].pts += 3; } 
+        else if(sb > sa || (sa === sb && pb > pa)) { db[tb].w++; db[tb].pts += 3; }
+        else if(sa === sb && pa === pb && document.getElementById('drawPanel').style.display === 'block') {
+            alert("Winner must be decided!"); return;
+        }
 
-        updStandings(); updBoot(); rstEngine();
-        document.getElementById('tickerText').innerText = `🏁 MATCH OVER: ${ta} ${sa}-${sb} ${tb} • TABLE UPDATED • `;
+        updStandings(); fullRst(); ['sA','sB','pA','pB'].forEach(i => document.getElementById(i).value = 0);
     }
 
     function updStandings() {
         const b = document.getElementById('standingsBody'); b.innerHTML = "";
         const sorted = Object.keys(db).sort((x,y) => db[y].pts - db[x].pts || (db[y].gf-db[y].ga) - (db[x].gf-db[x].ga));
-        sorted.forEach(t => {
-            b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].w}</td><td>${db[t].gf - db[t].ga}</td><td style="font-weight:800; color:var(--isl-blue)">${db[t].pts}</td></tr>`;
-        });
+        sorted.forEach(t => { b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].w}</td><td>${db[t].gf - db[t].ga}</td><td style="color:var(--apl-gold);">${db[t].pts}</td></tr>`; });
     }
 
-    function updBoot() {
-        const b = document.getElementById('bootBody'); b.innerHTML = "";
-        Object.keys(scorers).sort((x,y) => scorers[y] - scorers[x]).forEach(p => {
-            b.innerHTML += `<tr><td>${p}</td><td>${scorers[p]}</td></tr>`;
-        });
-    }
-
-    function shareWA() {
-        let text = "*🏆 VSL 2026 STANDINGS* \n\nTEAM | P | W | GD | *PTS*\n";
-        Object.keys(db).forEach(t => text += `${t} | ${db[t].p} | ${db[t].w} | ${db[t].gf-db[t].ga} | *${db[t].pts}*\n`);
-        window.open("https://wa.me/?text=" + encodeURIComponent(text), '_blank');
-    }
-
-    function rstEngine() { ['sA','sB'].forEach(i => document.getElementById(i).value = 0); rstTimer(); }
-    function ctrlTimer() { if(run) { clearInterval(run); run = null; } else { run = setInterval(() => { sec--; updateT(); }, 1000); } }
-    function updateT() { let m = Math.floor(sec/60); let s = sec%60; document.getElementById('timeDisp').innerText = `${m}:${s<10?'0':''}${s}`; }
-    function rstTimer() { sec = 1200; updateT(); }
-    
-    function buildRos() {
-        const c = document.getElementById('rosCont'); c.innerHTML = "";
-        for(let t=1; t<=16; t++) {
-            c.innerHTML += `<div class="card"><input type="text" placeholder="TEAM ${t} NAME" style="font-weight:800; border-bottom:2px solid var(--isl-gold);"><input type="text" placeholder="2026 NOMINATED CAPTAIN"></div>`;
-        }
-    }
-    
-    function persistData() { localStorage.setItem('vsl_2026_pro', JSON.stringify({ db, scorers, blueBans })); alert("Tournament State Saved!"); }
-    function openM(id) { document.getElementById(id).style.display = 'block'; }
-    function closeM(id) { document.getElementById(id).style.display = 'none'; }
+    function persistData() { localStorage.setItem('apl_v18_final', JSON.stringify(db)); alert("DATA SYNCED!"); }
+    function softReset() { if(confirm("Clear all?")) { db = {}; updStandings(); fullRst(); } }
+    function shareWA() { /* WA logic */ }
 </script>
 </body>
 </html>
