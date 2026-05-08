@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APL / AFC Elite Hub</title>
+    <title>APL / AFC Master Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
@@ -14,40 +14,33 @@
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
         body { font-family: 'Montserrat', sans-serif; background: var(--afc-black); color: white; min-height: 100vh; overflow-x: hidden; }
 
-        .live-ticker {
-            background: var(--afc-gold); color: black; padding: 10px 0; font-weight: 900; font-size: 11px;
-            text-transform: uppercase; overflow: hidden; white-space: nowrap; position: sticky; top: 0; z-index: 1002;
-            border-bottom: 2px solid var(--neon);
-        }
-        .ticker-move { display: inline-block; animation: scroll 25s linear infinite; }
-        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
+        /* --- UI COMPONENTS --- */
         .page { display: none; padding-bottom: 120px; animation: fadeIn 0.4s ease; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         header { background: #0a0a0a; padding: 15px; text-align: center; border-bottom: 3px solid var(--afc-gold); font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 2px; }
         .section { padding: 15px; max-width: 650px; margin: auto; }
-        .card { background: var(--glass); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .card { background: var(--glass); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); position: relative; }
         .btn-gold { width: 100%; padding: 18px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
         .input-field { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--afc-gold); color: white; border-radius: 8px; margin-bottom: 10px; }
 
-        /* --- DYNAMIC TIMER HUB --- */
+        /* --- ⏱️ 8-2-8 TIMER HUB --- */
         .timer-card { background: linear-gradient(180deg, #000, #0a2e16); padding: 25px; text-align: center; border-bottom: 2px solid var(--afc-gold); }
-        .timer-hud { font-family: 'Bebas Neue'; font-size: 85px; color: var(--afc-gold); line-height: 1; cursor: pointer; }
-        .time-selector { display: flex; justify-content: center; gap: 8px; margin-top: 15px; }
-        .time-btn { background: rgba(255,255,255,0.1); border: 1px solid #444; color: white; padding: 5px 12px; border-radius: 5px; font-size: 10px; font-weight: 800; cursor: pointer; }
-        .time-btn.active-time { background: var(--neon); color: black; border-color: var(--neon); }
+        .timer-hud { font-family: 'Bebas Neue'; font-size: 95px; color: var(--afc-gold); line-height: 1; cursor: pointer; transition: 0.3s; }
+        .timer-hud:active { transform: scale(0.95); opacity: 0.7; }
+        #stageLabel { font-weight: 900; color: var(--neon); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
 
-        .score-display { font-family: 'Bebas Neue'; font-size: 70px; color: white; background: transparent; border: none; text-align: center; width: 80px; }
+        .score-display { font-family: 'Bebas Neue'; font-size: 75px; color: white; background: transparent; border: none; text-align: center; width: 85px; }
+        
+        /* --- 🏆 KNOCKOUT DECIDER PANEL --- */
+        #drawPanel { display: none; background: rgba(0,0,0,0.95); border: 2px solid var(--neon); border-radius: 15px; padding: 20px; margin-top: 15px; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
         .admin-only { display: none; }
-
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 4px solid var(--afc-gold); z-index: 1001; }
         .nav-item { background: none; border: 1px solid #333; color: white; font-size: 10px; padding: 10px; border-radius: 8px; font-weight: 800; text-align: center; }
         .nav-item.active-nav { border-color: var(--afc-gold); color: var(--afc-gold); }
-
-        #scannerOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 5000; flex-direction: column; }
-        #videoPreview { width: 100%; height: 65vh; object-fit: cover; }
 
         table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
         th { background: #000; color: var(--afc-gold); padding: 12px; font-size: 10px; }
@@ -56,35 +49,27 @@
 </head>
 <body>
 
-<div class="live-ticker"><div class="ticker-move">🏆 APL / AFC: CUSTOM MATCH DURATION ENABLED • ADMIN: 111000 | GUEST: 2026 • 24/7 ONLINE 🏆</div></div>
-
 <div id="homePage" class="page active">
-    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
         <img src="48981.jpg" style="width:150px; margin-bottom:20px;" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
         <div style="font-family:'Bebas Neue'; font-size:55px; color:var(--afc-gold); line-height:0.9;">APL / <span>AFC</span></div>
-        <div class="card" style="margin-top:40px; width:320px;">
-            <input type="password" id="pin" placeholder="ACCESS CODE" class="input-field" style="text-align:center; font-size:18px;">
-            <button class="btn-gold" onclick="auth()">START HUB</button>
+        <div class="card" style="margin-top:40px; width:100%; max-width:320px;">
+            <input type="password" id="pin" placeholder="ENTER PIN" class="input-field" style="text-align:center; font-size:20px;">
+            <button class="btn-gold" onclick="auth()">OPEN HUB</button>
         </div>
     </div>
 </div>
 
 <div id="matchPage" class="page">
-    <header>LIVE <span>MATCH HUB</span></header>
+    <header>LIVE <span>MATCH CENTER</span></header>
+    
     <div class="timer-card">
-        <div id="stageLabel" style="font-weight:900; color:var(--afc-gold); font-size:10px;">STADIUM READY</div>
-        <div class="timer-hud" id="timeDisp">08:00</div>
+        <div id="stageLabel">1ST HALF (8M)</div>
+        <div class="timer-hud" id="timeDisp" onclick="manualTimeEdit()">08:00</div>
         
-        <div class="admin-only time-selector" id="timeSelector">
-            <button class="time-btn" onclick="setBaseTime(300, this)">5 MIN</button>
-            <button class="time-btn active-time" onclick="setBaseTime(480, this)">8 MIN</button>
-            <button class="time-btn" onclick="setBaseTime(600, this)">10 MIN</button>
-            <button class="time-btn" onclick="setBaseTime(900, this)">15 MIN</button>
-        </div>
-
         <div class="admin-only" id="timerControls" style="display: none; gap: 10px; justify-content: center; margin-top:20px;">
             <button onclick="ctrlTimer()" id="tBtn" class="btn-gold" style="width:120px; padding:10px;">START</button>
-            <button onclick="fullRst()" class="btn-gold" style="width:60px; padding:10px; background:white;">↺</button>
+            <button onclick="resetMatchTimer()" class="btn-gold" style="width:60px; padding:10px; background:white;">↺</button>
         </div>
     </div>
 
@@ -101,35 +86,35 @@
                     <input type="number" id="sB" value="0" class="score-display">
                 </div>
             </div>
-            <button class="btn-gold admin-only" id="saveMatchBtn" style="margin-top:20px; display:none;" onclick="saveMatch()">SAVE RESULT</button>
+
+            <div id="drawPanel">
+                <h3 style="color:var(--neon); font-size:12px; margin-bottom:15px; font-weight:900; text-align:center;">MATCH DRAWN! SELECT DECIDER:</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn-gold" style="font-size:10px; background:var(--neon); color:black;" onclick="triggerExtraTime()">+5M EXTRA</button>
+                    <button class="btn-gold" style="font-size:10px;" onclick="triggerPenalties()">PENALTY KICKS</button>
+                </div>
+                <div id="pkInput" style="display:none; margin-top:15px; text-align:center; border-top: 1px solid #333; padding-top:15px;">
+                    <div style="font-size:10px; color:var(--afc-gold); margin-bottom:10px;">PK SHOOTOUT SCORE</div>
+                    <input type="number" id="pkA" value="0" style="width:50px; background:none; border:1px solid gold; color:white; font-size:20px; text-align:center;">
+                    <span style="margin:0 10px; font-weight:900;">-</span>
+                    <input type="number" id="pkB" value="0" style="width:50px; background:none; border:1px solid gold; color:white; font-size:20px; text-align:center;">
+                </div>
+            </div>
+
+            <button class="btn-gold admin-only" id="saveBtn" style="margin-top:25px; display:none;" onclick="saveFinalMatch()">SAVE FINAL RESULT</button>
         </div>
     </section>
 </div>
 
 <div id="dataPage" class="page">
-    <header>TOURNAMENT <span>DATA</span></header>
+    <header>LEAGUE <span>STANDINGS</span></header>
     <section class="section">
-        <div class="card admin-only" id="scannerCard" style="display:none;">
-            <h3 style="color:var(--afc-gold); margin-bottom:10px;">SQUAD SCANNER</h3>
-            <input type="text" id="targetTeam" placeholder="TEAM NAME" class="input-field">
-            <button class="btn-gold" style="background:var(--neon);" onclick="openScanner()">⚡ RAPID SCAN (5+3)</button>
-        </div>
-
         <table>
             <thead><tr><th>TEAM</th><th>P</th><th>GD</th><th style="color:var(--afc-gold)">PTS</th></tr></thead>
             <tbody id="standingsBody"></tbody>
         </table>
         <div id="squadList" style="margin-top:30px;"></div>
     </section>
-</div>
-
-<div id="scannerOverlay">
-    <video id="videoPreview" autoplay playsinline></video>
-    <div style="padding:20px; text-align:center; background:#000;">
-        <div id="scanCount" style="font-family:'Bebas Neue'; font-size:40px; color:var(--neon);">0 / 8</div>
-        <button class="btn-gold" style="background:white;" onclick="closeScanner()">FINISH</button>
-    </div>
-    <canvas id="hiddenCanvas" style="display:none;"></canvas>
 </div>
 
 <div class="bottom-nav" id="mainNav" style="display: none;">
@@ -139,15 +124,15 @@
 </div>
 
 <script>
-    let db = {}; let squads = []; let userRole = 'guest'; 
-    let sec = 480; let baseSec = 480; let run = null;
-    let videoStream = null; let isScanning = false;
+    let db = {}; let sec = 480; let run = null; 
+    let matchStage = 1; // 1: 1st Half, 2: Break, 3: 2nd Half, 4: FT
+    let userRole = 'guest';
 
     function auth() {
         const pin = document.getElementById('pin').value;
         if(pin === "111000") { userRole = 'admin'; startApp(); }
         else if(pin === "2026") { userRole = 'guest'; startApp(); }
-        else alert("WRONG CODE");
+        else alert("ACCESS DENIED");
     }
 
     function startApp() {
@@ -156,7 +141,7 @@
         document.getElementById('mainNav').style.display = 'grid';
         if(userRole === 'admin') {
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-            document.getElementById('saveMatchBtn').style.display = 'block';
+            document.getElementById('saveBtn').style.display = 'block';
         } else {
             document.querySelectorAll('input').forEach(i => i.readOnly = true);
         }
@@ -172,85 +157,105 @@
         }
     }
 
-    /* --- TIMER LOGIC --- */
-    function setBaseTime(s, btn) {
-        if(run) return alert("Stop timer first!");
-        baseSec = s; sec = s;
-        updateT();
-        document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active-time'));
-        btn.classList.add('active-time');
-    }
-
+    /* --- ⏱️ ADVANCED 8-2-8 TIMER ENGINE --- */
     function ctrlTimer() {
-        if(run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
-        else {
+        if(run) { 
+            clearInterval(run); run = null; 
+            document.getElementById('tBtn').innerText = "RESUME"; 
+        } else {
             document.getElementById('tBtn').innerText = "PAUSE";
-            run = setInterval(() => { 
-                sec--; updateT(); 
-                if(sec<=0) { clearInterval(run); run = null; alert("TIME UP!"); } 
+            run = setInterval(() => {
+                sec--; updateT();
+                if(sec <= 0) {
+                    clearInterval(run); run = null;
+                    handleStageTransition();
+                }
             }, 1000);
         }
     }
 
-    function updateT() { 
-        let m = Math.floor(sec/60), s = sec%60; 
-        document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; 
-    }
-
-    function fullRst() { sec = baseSec; updateT(); clearInterval(run); run = null; document.getElementById('tBtn').innerText = "START"; }
-
-    /* --- DATA & SQUAD (Aadhar logic from previous version) --- */
-    function openScanner() {
-        const team = document.getElementById('targetTeam').value.toUpperCase();
-        if(!team) return alert("Enter team name!");
-        document.getElementById('scannerOverlay').style.display = 'flex';
-        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
-            videoStream = stream; document.getElementById('videoPreview').srcObject = stream;
-            isScanning = true; requestAnimationFrame(scanTick);
-        });
-    }
-
-    function scanTick() {
-        if(!isScanning) return;
-        const video = document.getElementById('videoPreview');
-        if(video.readyState === video.HAVE_ENOUGH_DATA) {
-            const canvas = document.getElementById('hiddenCanvas');
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const code = jsQR(imgData.data, imgData.width, imgData.height);
-            if(code) { processQR(code.data); }
+    function handleStageTransition() {
+        if(matchStage === 1) { // End of 1st Half
+            matchStage = 2; sec = 120; // 2 Min Break
+            document.getElementById('stageLabel').innerText = "HT BREAK (2M)";
+            alert("End of First Half! 2-Minute Break Starts.");
+        } else if(matchStage === 2) { // End of Break
+            matchStage = 3; sec = 480; // 2nd Half 8 Min
+            document.getElementById('stageLabel').innerText = "2ND HALF (8M)";
+            alert("Break Over! Second Half Starts.");
+        } else { // End of 2nd Half
+            matchStage = 4;
+            document.getElementById('stageLabel').innerText = "FULL TIME";
+            checkDrawStatus();
         }
-        requestAnimationFrame(scanTick);
+        updateT();
+        document.getElementById('tBtn').innerText = "START";
     }
 
-    function processQR(data) {
-        try {
-            const name = (data.match(/name="([^"]+)"/) || data.match(/n="([^"]+)"/))[1];
-            const dobStr = (data.match(/dob="([^"]+)"/) || data.match(/d="([^"]+)"/))[1];
-            const team = document.getElementById('targetTeam').value.toUpperCase();
-            const age = new Date().getFullYear() - new Date(dobStr.replace(/\//g, '-')).getFullYear();
-            if(!squads.find(p => p.name === name)) {
-                squads.push({ team, name, age });
-                if(navigator.vibrate) navigator.vibrate(200);
-                document.getElementById('scanCount').innerText = squads.filter(p => p.team === team).length + " / 8";
-                renderSquads(); persist();
-            }
-        } catch(e) {}
+    function checkDrawStatus() {
+        const sA = parseInt(document.getElementById('sA').value) || 0;
+        const sB = parseInt(document.getElementById('sB').value) || 0;
+        if(sA === sB) {
+            document.getElementById('drawPanel').style.display = 'block';
+        }
     }
 
-    function closeScanner() { isScanning = false; if(videoStream) videoStream.getTracks().forEach(t => t.stop()); document.getElementById('scannerOverlay').style.display = 'none'; }
+    function triggerExtraTime() {
+        sec = 300; // 5 Min Extra
+        document.getElementById('stageLabel').innerText = "EXTRA TIME (+5M)";
+        document.getElementById('drawPanel').style.display = 'none';
+        updateT();
+    }
 
-    function saveMatch() {
-        const ta = document.getElementById('tAName').value.toUpperCase();
-        const tb = document.getElementById('tBName').value.toUpperCase();
+    function triggerPenalties() {
+        document.getElementById('pkInput').style.display = 'block';
+    }
+
+    function manualTimeEdit() {
+        if(userRole !== 'admin' || run) return;
+        let mins = prompt("Set Custom Minutes:", Math.floor(sec/60));
+        if(mins !== null) {
+            sec = parseInt(mins) * 60;
+            updateT();
+        }
+    }
+
+    function updateT() {
+        let m = Math.floor(sec/60), s = sec%60;
+        document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function resetMatchTimer() {
+        clearInterval(run); run = null;
+        sec = 480; matchStage = 1;
+        document.getElementById('stageLabel').innerText = "1ST HALF (8M)";
+        document.getElementById('drawPanel').style.display = 'none';
+        document.getElementById('pkInput').style.display = 'none';
+        updateT();
+    }
+
+    /* --- 📊 DATA ENGINE --- */
+    function saveFinalMatch() {
+        const ta = document.getElementById('tAName').value.toUpperCase() || "TEAM A";
+        const tb = document.getElementById('tBName').value.toUpperCase() || "TEAM B";
         const sa = parseInt(document.getElementById('sA').value) || 0;
         const sb = parseInt(document.getElementById('sB').value) || 0;
-        if(!db[ta]) db[ta] = {p:0, gf:0, ga:0, pts:0}; if(!db[tb]) db[tb] = {p:0, gf:0, ga:0, pts:0};
-        db[ta].p++; db[tb].p++; db[ta].gf += sa; db[ta].ga += sb; db[tb].gf += sb; db[tb].ga += sa;
-        if(sa > sb) db[ta].pts += 3; else if(sb > sa) db[tb].pts += 3;
-        updStandings(); persist(); fullRst();
+        const pkA = parseInt(document.getElementById('pkA').value) || 0;
+        const pkB = parseInt(document.getElementById('pkB').value) || 0;
+
+        if(!db[ta]) db[ta] = {p:0, gf:0, ga:0, pts:0};
+        if(!db[tb]) db[tb] = {p:0, gf:0, ga:0, pts:0};
+
+        db[ta].p++; db[tb].p++;
+        db[ta].gf += sa; db[ta].ga += sb;
+        db[tb].gf += sb; db[tb].ga += sa;
+
+        // Points Logic: Winner of PK shootout also gets the 3 points.
+        if(sa > sb || (sa === sb && pkA > pkB)) db[ta].pts += 3;
+        else if(sb > sa || (sa === sb && pkB > pkA)) db[tb].pts += 3;
+
+        updStandings(); persist(); resetMatchTimer();
+        alert("Match Result Saved Successfully!");
     }
 
     function updStandings() {
@@ -259,18 +264,8 @@
         sorted.forEach(t => { b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].gf-db[t].ga}</td><td style="color:var(--afc-gold)">${db[t].pts}</td></tr>`; });
     }
 
-    function renderSquads() {
-        const div = document.getElementById('squadList'); div.innerHTML = "";
-        const groups = squads.reduce((r, a) => { r[a.team] = r[a.team] || []; r[a.team].push(a); return r; }, {});
-        for(let team in groups) {
-            let html = `<div class="card"><b style="color:var(--afc-gold)">${team}</b><hr style="opacity:0.1; margin:10px 0;">`;
-            groups[team].forEach((p, i) => { html += `<div style="font-size:12px; margin-bottom:5px;">${i+1}. ${p.name} (${p.age}y)</div>`; });
-            div.innerHTML += html + `</div>`;
-        }
-    }
-
-    function persist() { if(userRole === 'admin') localStorage.setItem('apl_final_v32', JSON.stringify({db, squads})); }
-    function load() { const d = JSON.parse(localStorage.getItem('apl_final_v32')); if(d) { db=d.db; squads=d.squads; updStandings(); renderSquads(); } }
+    function persist() { if(userRole === 'admin') localStorage.setItem('apl_master_v33', JSON.stringify(db)); }
+    function load() { const d = JSON.parse(localStorage.getItem('apl_master_v33')); if(d) { db=d; updStandings(); } }
 </script>
 </body>
 </html>
