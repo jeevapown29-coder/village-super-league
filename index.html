@@ -28,7 +28,6 @@
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- UI COMPONENTS --- */
         header { background: #0a0a0a; padding: 15px; text-align: center; border-bottom: 3px solid var(--afc-gold); font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 2px; }
         .section { padding: 15px; max-width: 650px; margin: auto; }
         .card { background: var(--glass); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
@@ -39,19 +38,16 @@
         .timer-card { background: linear-gradient(180deg, #000, #0a2e16); padding: 30px; text-align: center; border-bottom: 2px solid var(--afc-gold); }
         .timer-hud { font-family: 'Bebas Neue'; font-size: 85px; color: var(--afc-gold); line-height: 1; cursor: pointer; }
         .score-display { font-family: 'Bebas Neue'; font-size: 70px; color: white; background: transparent; border: none; text-align: center; width: 80px; }
-        .analytics-bar { height: 8px; background: #222; border-radius: 4px; margin: 15px 0; overflow: hidden; display: flex; }
-        #probA { background: var(--neon); width: 50%; transition: 0.8s ease; }
-        #probB { background: var(--afc-gold); width: 50%; transition: 0.8s ease; }
+        
+        /* --- ACCESS CONTROL --- */
+        .admin-only { display: none; }
 
-        /* --- ⚡ RAPID SCANNER --- */
-        #scannerOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 5000; flex-direction: column; }
-        #videoPreview { width: 100%; height: 65vh; object-fit: cover; border-bottom: 4px solid var(--afc-gold); }
-        .scan-controls { padding: 20px; flex: 1; text-align: center; background: #0a0a0a; }
-
-        /* --- NAVIGATION --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 4px solid var(--afc-gold); z-index: 1001; }
         .nav-item { background: none; border: 1px solid #333; color: white; font-size: 10px; padding: 10px; border-radius: 8px; font-weight: 800; text-align: center; }
         .nav-item.active-nav { border-color: var(--afc-gold); color: var(--afc-gold); }
+
+        #scannerOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 5000; flex-direction: column; }
+        #videoPreview { width: 100%; height: 65vh; object-fit: cover; }
 
         table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.5); border-radius: 15px; overflow: hidden; }
         th { background: #000; color: var(--afc-gold); padding: 12px; font-size: 10px; }
@@ -60,28 +56,26 @@
 </head>
 <body>
 
-<div class="live-ticker"><div class="ticker-move" id="tickerText">🏆 APL / AFC: RAPID SCANNER & 5+3 FORMAT READY • REAL-TIME AGE AUTOMATION • 24/7 ONLINE 🏆</div></div>
+<div class="live-ticker"><div class="ticker-move">🏆 APL / AFC: LIVE HUB • SECURE DUAL-ACCESS SYSTEM ONLINE • 5+3 SQUAD FORMAT 🏆</div></div>
 
 <div id="homePage" class="page active">
     <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-        <img src="48981.jpg" alt="Logo" style="width:160px; margin-bottom:20px;" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
+        <img src="48981.jpg" style="width:160px; margin-bottom:20px;" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
         <div style="font-family:'Bebas Neue'; font-size:55px; color:var(--afc-gold); line-height:0.9;">APL / <span>AFC</span></div>
-        <div style="font-size:10px; letter-spacing:5px; color:#555; margin-top:10px; font-weight:900;">ELITE MANAGEMENT HUB</div>
         <div class="card" style="margin-top:40px; width:320px;">
-            <input type="password" id="pin" placeholder="ADMIN PIN" class="input-field" style="text-align:center; font-size:20px;">
-            <button class="btn-gold" onclick="auth()">START SESSION</button>
+            <input type="password" id="pin" placeholder="ENTER ACCESS CODE" class="input-field" style="text-align:center; font-size:18px;">
+            <button class="btn-gold" onclick="auth()">VERIFY ACCESS</button>
+            <p style="font-size: 10px; color: #444; margin-top: 15px;">Official Tournament Management Suite</p>
         </div>
     </div>
 </div>
 
 <div id="matchPage" class="page">
-    <header>APL / AFC <span>LIVE HUB</span></header>
+    <header>LIVE <span>MATCH HUB</span></header>
     <div class="timer-card">
-        <div id="stageLabel" style="font-weight:900; color:var(--afc-gold); font-size:10px; letter-spacing:2px;">KICKOFF READY</div>
-        <div class="timer-hud" id="timeDisp" onclick="manualTimeEdit()">08:00</div>
-        <div class="analytics-bar"><div id="probA"></div><div id="probB"></div></div>
-        <div id="winProbText" style="font-size:9px; color:#aaa; margin-top:5px;">WIN PROBABILITY: 50% - 50%</div>
-        <div style="display: flex; gap: 10px; justify-content: center; margin-top:15px;">
+        <div id="stageLabel" style="font-weight:900; color:var(--afc-gold); font-size:10px;">STADIUM READY</div>
+        <div class="timer-hud" id="timeDisp">08:00</div>
+        <div class="admin-only" id="timerControls" style="display: none; gap: 10px; justify-content: center; margin-top:15px;">
             <button onclick="ctrlTimer()" id="tBtn" class="btn-gold" style="width:120px; padding:10px;">START</button>
             <button onclick="fullRst()" class="btn-gold" style="width:60px; padding:10px; background:white;">↺</button>
         </div>
@@ -91,65 +85,76 @@
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; text-align: center;">
                 <div style="flex:1">
-                    <input type="text" id="tAName" placeholder="TEAM A" oninput="calcProb()" class="input-field" style="text-align:center; border:none; border-bottom:2px solid var(--neon); font-weight:900;">
-                    <input type="number" id="sA" value="0" class="score-display" oninput="calcProb()">
+                    <input type="text" id="tAName" placeholder="HOME" class="input-field" style="text-align:center; border:none; border-bottom:2px solid var(--neon); font-weight:900;">
+                    <input type="number" id="sA" value="0" class="score-display">
                 </div>
                 <div style="font-family:'Bebas Neue'; color:var(--afc-gold); font-size:30px;">VS</div>
                 <div style="flex:1">
-                    <input type="text" id="tBName" placeholder="TEAM B" oninput="calcProb()" class="input-field" style="text-align:center; border:none; border-bottom:2px solid var(--neon); font-weight:900;">
-                    <input type="number" id="sB" value="0" class="score-display" oninput="calcProb()">
+                    <input type="text" id="tBName" placeholder="AWAY" class="input-field" style="text-align:center; border:none; border-bottom:2px solid var(--neon); font-weight:900;">
+                    <input type="number" id="sB" value="0" class="score-display">
                 </div>
             </div>
-            <button class="btn-gold" style="margin-top:20px;" onclick="saveMatch()">SAVE FINAL RESULT</button>
+            <button class="btn-gold admin-only" id="saveMatchBtn" style="margin-top:20px; display:none;" onclick="saveMatch()">SAVE FINAL RESULT</button>
         </div>
     </section>
 </div>
 
 <div id="dataPage" class="page">
-    <header>AFC <span>DATABASE</span></header>
+    <header>TOURNAMENT <span>DATA</span></header>
     <section class="section">
-        <div class="card">
-            <h3 style="color:var(--afc-gold); margin-bottom:15px;">RAPID SQUAD SCANNER</h3>
-            <input type="text" id="targetTeam" placeholder="ENTER TEAM NAME TO SCAN" class="input-field">
-            <button class="btn-gold" style="background:var(--neon);" onclick="openScanner()">⚡ START 2-MIN RAPID SCAN</button>
+        <div class="card admin-only" id="scannerCard" style="display:none;">
+            <h3 style="color:var(--afc-gold); margin-bottom:10px;">RAPID SQUAD SCANNER</h3>
+            <input type="text" id="targetTeam" placeholder="TEAM NAME" class="input-field">
+            <button class="btn-gold" style="background:var(--neon);" onclick="openScanner()">⚡ START SCAN</button>
         </div>
 
-        <div style="font-family:'Bebas Neue'; font-size:22px; color:var(--afc-gold); margin-bottom:10px;">STANDINGS</div>
         <table>
             <thead><tr><th>TEAM</th><th>P</th><th>GD</th><th style="color:var(--afc-gold)">PTS</th></tr></thead>
             <tbody id="standingsBody"></tbody>
         </table>
-
         <div id="squadList" style="margin-top:30px;"></div>
     </section>
 </div>
 
 <div id="scannerOverlay">
     <video id="videoPreview" autoplay playsinline></video>
-    <div class="scan-controls">
-        <div id="scanCount" style="font-family:'Bebas Neue'; font-size:40px; color:var(--neon);">0 / 8 PLAYERS</div>
-        <p style="font-size:12px; margin-bottom:15px;">Place Aadhaar QR in front of camera...</p>
-        <button class="btn-gold" style="background:white; color:black;" onclick="closeScanner()">FINISH SCAN</button>
+    <div style="padding:20px; text-align:center; background:#000;">
+        <div id="scanCount" style="font-family:'Bebas Neue'; font-size:40px; color:var(--neon);">0 / 8</div>
+        <button class="btn-gold" style="background:white;" onclick="closeScanner()">FINISH</button>
     </div>
     <canvas id="hiddenCanvas" style="display:none;"></canvas>
 </div>
 
 <div class="bottom-nav" id="mainNav" style="display: none;">
-    <button class="nav-item active-nav" onclick="showPage('matchPage', this)">MATCH HUB</button>
+    <button class="nav-item active-nav" onclick="showPage('matchPage', this)">MATCH</button>
     <button class="nav-item" onclick="showPage('dataPage', this)">DATABASE</button>
-    <button class="nav-item" style="color:red" onclick="softReset()">RESET</button>
+    <button class="nav-item" onclick="location.reload()">LOGOUT</button>
 </div>
 
 <script>
-    let db = {}; let squads = []; let sec = 480; let run = null; let mStage = 1;
-    let isScanning = false; let lastScanTime = 0; let videoStream = null;
+    let db = {}; let squads = []; let userRole = 'guest'; let sec = 480; let run = null;
+    let videoStream = null; let isScanning = false;
 
     function auth() {
-        if(document.getElementById('pin').value === "2026") {
-            showPage('matchPage');
-            document.getElementById('mainNav').style.display = 'grid';
-            load();
-        } else alert("WRONG PIN");
+        const pin = document.getElementById('pin').value;
+        // ADMIN: 111000 | GUEST: 2026
+        if(pin === "111000") { userRole = 'admin'; startApp(); }
+        else if(pin === "2026") { userRole = 'guest'; startApp(); }
+        else alert("INVALID ACCESS CODE");
+    }
+
+    function startApp() {
+        document.getElementById('homePage').style.display = 'none';
+        document.getElementById('matchPage').style.display = 'block';
+        document.getElementById('mainNav').style.display = 'grid';
+        
+        if(userRole === 'admin') {
+            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+            document.getElementById('saveMatchBtn').style.display = 'block';
+        } else {
+            document.querySelectorAll('input').forEach(i => i.readOnly = true);
+        }
+        load();
     }
 
     function showPage(id, el) {
@@ -161,25 +166,15 @@
         }
     }
 
-    // --- ⚡ RAPID SCANNER LOGIC ---
+    // --- RAPID SCANNER ---
     function openScanner() {
         const team = document.getElementById('targetTeam').value.toUpperCase();
         if(!team) return alert("Enter team name first!");
-        
         document.getElementById('scannerOverlay').style.display = 'flex';
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
-            videoStream = stream;
-            document.getElementById('videoPreview').srcObject = stream;
-            isScanning = true;
-            requestAnimationFrame(scanTick);
+            videoStream = stream; document.getElementById('videoPreview').srcObject = stream;
+            isScanning = true; requestAnimationFrame(scanTick);
         });
-    }
-
-    function closeScanner() {
-        isScanning = false;
-        if(videoStream) videoStream.getTracks().forEach(t => t.stop());
-        document.getElementById('scannerOverlay').style.display = 'none';
-        document.getElementById('targetTeam').value = "";
     }
 
     function scanTick() {
@@ -192,11 +187,7 @@
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
             const code = jsQR(imgData.data, imgData.width, imgData.height);
-
-            if(code && Date.now() - lastScanTime > 2000) {
-                processQR(code.data);
-                lastScanTime = Date.now();
-            }
+            if(code) { processQR(code.data); }
         }
         requestAnimationFrame(scanTick);
     }
@@ -205,27 +196,46 @@
         try {
             const name = (data.match(/name="([^"]+)"/) || data.match(/n="([^"]+)"/))[1];
             const dobStr = (data.match(/dob="([^"]+)"/) || data.match(/d="([^"]+)"/))[1];
-            
             const team = document.getElementById('targetTeam').value.toUpperCase();
-            
-            // Age calculation
-            const parts = dobStr.replace(/\//g, '-').split('-');
-            const finalDOB = parts[0].length === 4 ? `${parts[0]}-${parts[1]}-${parts[2]}` : `${parts[2]}-${parts[1]}-${parts[0]}`;
-            const bday = new Date(finalDOB);
-            const today = new Date();
-            let age = today.getFullYear() - bday.getFullYear();
-            
-            squads.push({ team, name, dob: finalDOB, age });
-            if(navigator.vibrate) navigator.vibrate(200);
-            
-            const count = squads.filter(p => p.team === team).length;
-            document.getElementById('scanCount').innerText = `${count} / 8 PLAYERS`;
-            
-            renderSquads();
-            persist();
+            const age = new Date().getFullYear() - new Date(dobStr.replace(/\//g, '-')).getFullYear();
+            if(!squads.find(p => p.name === name)) {
+                squads.push({ team, name, dob: dobStr, age });
+                if(navigator.vibrate) navigator.vibrate(200);
+                const count = squads.filter(p => p.team === team).length;
+                document.getElementById('scanCount').innerText = `${count} / 8`;
+                renderSquads(); persist();
+                if(count >= 8) closeScanner();
+            }
+        } catch(e) {}
+    }
 
-            if(count >= 8) { alert("Team Complete!"); closeScanner(); }
-        } catch(e) { console.log("Invalid QR"); }
+    function closeScanner() { isScanning = false; if(videoStream) videoStream.getTracks().forEach(t => t.stop()); document.getElementById('scannerOverlay').style.display = 'none'; }
+
+    // --- TIMER & MATCH ---
+    function ctrlTimer() {
+        if(run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
+        else {
+            document.getElementById('tBtn').innerText = "PAUSE";
+            run = setInterval(() => { sec--; updateT(); if(sec<=0){clearInterval(run);run=null;} }, 1000);
+        }
+    }
+    function updateT() { let m = Math.floor(sec/60), s = sec%60; document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; }
+    
+    function saveMatch() {
+        const ta = document.getElementById('tAName').value.toUpperCase();
+        const tb = document.getElementById('tBName').value.toUpperCase();
+        const sa = parseInt(document.getElementById('sA').value) || 0;
+        const sb = parseInt(document.getElementById('sB').value) || 0;
+        if(!db[ta]) db[ta] = {p:0, gf:0, ga:0, pts:0}; if(!db[tb]) db[tb] = {p:0, gf:0, ga:0, pts:0};
+        db[ta].p++; db[tb].p++; db[ta].gf += sa; db[ta].ga += sb; db[tb].gf += sb; db[tb].ga += sa;
+        if(sa > sb) db[ta].pts += 3; else if(sb > sa) db[tb].pts += 3;
+        updStandings(); persist();
+    }
+
+    function updStandings() {
+        const b = document.getElementById('standingsBody'); b.innerHTML = "";
+        const sorted = Object.keys(db).sort((x,y) => db[y].pts - db[x].pts || (db[y].gf-db[y].ga) - (db[x].gf-db[x].ga));
+        sorted.forEach(t => { b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].gf-db[t].ga}</td><td style="color:var(--afc-gold)">${db[t].pts}</td></tr>`; });
     }
 
     function renderSquads() {
@@ -233,60 +243,13 @@
         const groups = squads.reduce((r, a) => { r[a.team] = r[a.team] || []; r[a.team].push(a); return r; }, {});
         for(let team in groups) {
             let html = `<div class="card"><b style="color:var(--afc-gold)">${team}</b><hr style="opacity:0.1; margin:10px 0;">`;
-            groups[team].forEach((p, i) => {
-                html += `<div style="font-size:12px; margin-bottom:5px;">${i+1}. ${p.name} - <span style="color:var(--neon)">${p.age}y</span> [${i<5?'STARTER':'SUB'}]</div>`;
-            });
+            groups[team].forEach((p, i) => { html += `<div style="font-size:12px; margin-bottom:5px;">${i+1}. ${p.name} (${p.age}y)</div>`; });
             div.innerHTML += html + `</div>`;
         }
     }
 
-    // --- ANALYTICS & TIMER ---
-    function calcProb() {
-        let sA = parseInt(document.getElementById('sA').value) || 0;
-        let sB = parseInt(document.getElementById('sB').value) || 0;
-        let wA = 50 + (sA - sB) * 15;
-        wA = Math.min(Math.max(wA, 5), 95); 
-        document.getElementById('probA').style.width = wA + "%";
-        document.getElementById('probB').style.width = (100-wA) + "%";
-        document.getElementById('winProbText').innerText = `WIN PROBABILITY: ${wA}% - ${100-wA}%`;
-    }
-
-    function ctrlTimer() {
-        if(run) { clearInterval(run); run = null; document.getElementById('tBtn').innerText = "RESUME"; }
-        else {
-            document.getElementById('tBtn').innerText = "PAUSE";
-            run = setInterval(() => { sec--; updateT(); if(sec<=0){clearInterval(run);run=null;nextStage();} }, 1000);
-        }
-    }
-    function nextStage() {
-        if(mStage === 1) { mStage = 2; sec = 120; document.getElementById('stageLabel').innerText = "HT BREAK"; }
-        else if(mStage === 2) { mStage = 3; sec = 480; document.getElementById('stageLabel').innerText = "2ND HALF"; }
-        updateT();
-    }
-    function updateT() { let m = Math.floor(sec/60), s = sec%60; document.getElementById('timeDisp').innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`; }
-    function manualTimeEdit() { if(!run) { let m = prompt("Set Mins:"); if(m) { sec = m*60; updateT(); } } }
-
-    // --- DATA ---
-    function saveMatch() {
-        const ta = document.getElementById('tAName').value.toUpperCase() || "TEAM A";
-        const tb = document.getElementById('tBName').value.toUpperCase() || "TEAM B";
-        const sa = parseInt(document.getElementById('sA').value) || 0;
-        const sb = parseInt(document.getElementById('sB').value) || 0;
-        if(!db[ta]) db[ta] = {p:0, gf:0, ga:0, pts:0};
-        if(!db[tb]) db[tb] = {p:0, gf:0, ga:0, pts:0};
-        db[ta].p++; db[tb].p++; db[ta].gf += sa; db[ta].ga += sb; db[tb].gf += sb; db[tb].ga += sa;
-        if(sa > sb) db[ta].pts += 3; else if(sb > sa) db[tb].pts += 3;
-        updStandings(); fullRst(); persist();
-    }
-    function updStandings() {
-        const b = document.getElementById('standingsBody'); b.innerHTML = "";
-        const sorted = Object.keys(db).sort((x,y) => db[y].pts - db[x].pts || (db[y].gf-db[y].ga) - (db[x].gf-db[x].ga));
-        sorted.forEach(t => { b.innerHTML += `<tr><td>${t}</td><td>${db[t].p}</td><td>${db[t].gf-db[t].ga}</td><td style="color:var(--afc-gold)">${db[t].pts}</td></tr>`; });
-    }
-    function fullRst() { sec = 480; mStage = 1; updateT(); ['sA','sB'].forEach(i => document.getElementById(i).value = 0); }
-    function persist() { localStorage.setItem('apl_final_v29', JSON.stringify({db, squads})); }
-    function load() { const d = JSON.parse(localStorage.getItem('apl_final_v29')); if(d) { db=d.db; squads=d.squads; updStandings(); renderSquads(); } }
-    function softReset() { if(confirm("Wipe all data?")) { localStorage.clear(); location.reload(); } }
+    function persist() { if(userRole === 'admin') localStorage.setItem('apl_master_v31', JSON.stringify({db, squads})); }
+    function load() { const d = JSON.parse(localStorage.getItem('apl_master_v31')); if(d) { db=d.db; squads=d.squads; updStandings(); renderSquads(); } }
 </script>
 </body>
 </html>
