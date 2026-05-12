@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APL / AFC</title>
+    <title>APL / AFC Authority Hub v57</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
@@ -22,10 +22,10 @@
 
         #gateSelection { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; }
         .gate-card { width: 100%; max-width: 350px; padding: 25px; background: #0a0a0a; border: 2px solid #222; border-radius: 20px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
-        .gate-card:hover { border-color: var(--afc-gold); transform: scale(1.02); }
         
         header { background: #0a0a0a; padding: 15px; text-align: center; border-bottom: 3px solid var(--afc-gold); font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 2px; }
-        .section { padding: 15px; max-width: 650px; margin: auto; }
+        .section { padding: 15px; max-width: 650px; margin: auto; display: none; }
+        .active-section { display: block; }
         .card { background: var(--glass); border-radius: 15px; padding: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
         
         .role-badge { font-size: 10px; padding: 5px 12px; border-radius: 50px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; display: inline-block; }
@@ -38,6 +38,7 @@
         .owner-only, .mgmt-only { display: none; }
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; padding: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; border-top: 4px solid var(--afc-gold); z-index: 1001; }
         .nav-item { background: none; border: 1px solid #333; color: white; font-size: 9px; padding: 10px; border-radius: 8px; font-weight: 800; text-align: center; cursor: pointer; }
+        .nav-item.active-nav { border-color: var(--afc-gold); color: var(--afc-gold); }
         
         #scannerOverlay { display: none; position: fixed; inset: 0; background: #000; z-index: 5000; flex-direction: column; }
         #videoPreview { width: 100%; height: 70vh; object-fit: cover; }
@@ -45,18 +46,18 @@
 </head>
 <body>
 
-<div class="license-footer">LICENSED TO: JEEVA | APL SOFTWARE © 2026 | SQUAD: 5 STARTERS + 5 SUBS</div>
+<div class="license-footer">LICENSED TO: JEEVA | APL SOFTWARE © 2026 | 16 TEAMS • 5+5 SQUAD</div>
 
 <div id="gateSelection" class="page active">
     <img src="48981.jpg" style="width:120px; margin-bottom:20px;" onerror="this.src='https://i.ibb.co/L6VshWf/48981.jpg'">
     <h1 style="font-family:'Bebas Neue'; color:var(--afc-gold); margin-bottom:30px;">APL MASTER HUB</h1>
     <div class="gate-card" onclick="setTourney('U16')">
         <h2 style="color:var(--neon);">UNDER 16</h2>
-        <p style="font-size:10px; color:#555;">16 TEAMS • ELIGIBILITY 2010+</p>
+        <p style="font-size:10px; color:#555;">16 TEAMS • 2010+ ELIGIBILITY</p>
     </div>
     <div class="gate-card" onclick="setTourney('U19')">
         <h2 style="color:var(--afc-gold);">UNDER 19</h2>
-        <p style="font-size:10px; color:#555;">16 TEAMS • ELIGIBILITY 2007+</p>
+        <p style="font-size:10px; color:#555;">16 TEAMS • 2007+ ELIGIBILITY</p>
     </div>
 </div>
 
@@ -70,7 +71,7 @@
                 <option value="guest">GUEST (TEAMS)</option>
             </select>
             <input type="password" id="pinInput" placeholder="PIN CODE" class="input-field" style="text-align:center;">
-            <button class="btn-gold" onclick="verifyAccess()">ACTIVATE HUB</button>
+            <button class="btn-gold" onclick="verifyAccess()">LOGIN</button>
             <button onclick="location.reload()" style="background:none; border:none; color:#444; margin-top:10px; font-size:10px;">← BACK</button>
         </div>
     </div>
@@ -78,46 +79,43 @@
 
 <div id="hubPage" class="page">
     <header id="hubHeader">AJJOOR PREMIER LEAGUE</header>
-    <div class="section">
-        <div id="roleBadgeContainer" style="text-align:center; margin-top:5px;"></div>
-        
-        <div id="matchTab" class="view">
-            <div class="card" style="text-align:center; background: linear-gradient(180deg, #000, #0a2e16);">
-                <div id="timeDisp" style="font-family:'Bebas Neue'; font-size:80px; color:var(--afc-gold);">08:00</div>
-                <div class="mgmt-only" style="margin-top:10px;">
-                    <button class="btn-gold" onclick="ctrlTimer()" style="width:120px; padding:8px;">START MATCH</button>
-                </div>
-            </div>
-            <div class="card">
-                <div style="font-size: 10px; color: var(--neon); margin-bottom:10px; text-align:center;">FORMAT: 16 TEAMS | 5+5 PLAYERS</div>
-                <div style="display:flex; justify-content:space-between; gap:10px;">
-                    <input type="text" id="tA" placeholder="TEAM A" class="input-field" style="text-align:center;">
-                    <input type="text" id="tB" placeholder="TEAM B" class="input-field" style="text-align:center;">
-                </div>
-                <button class="btn-gold mgmt-only" onclick="alert('Score Saved Successfully')">SAVE RESULT</button>
-            </div>
-            <div class="card owner-only" style="border: 1px solid var(--jeeva-red);">
-                <p style="font-size:9px; color:var(--jeeva-red); font-weight:900;">ADMIN FINANCIAL LEDGER</p>
-                <div style="display:flex; justify-content:space-between; margin-top:10px;">
-                    <span>COLLECTED FUNDS:</span>
-                    <span style="color:var(--neon);">₹ 0.00</span>
-                </div>
+    <div id="roleBadgeContainer" style="text-align:center; padding: 10px 0;"></div>
+
+    <div id="matchTab" class="section active-section">
+        <div class="card" style="text-align:center; background: linear-gradient(180deg, #000, #0a2e16);">
+            <div id="timeDisp" style="font-family:'Bebas Neue'; font-size:80px; color:var(--afc-gold);">08:00</div>
+            <div class="mgmt-only" style="margin-top:10px;">
+                <button class="btn-gold" onclick="ctrlTimer()" style="width:120px; padding:8px;">START MATCH</button>
             </div>
         </div>
-
-        <div id="scannerTab" class="section" style="display:none;">
-            <div class="card">
-                <h3 style="color:var(--afc-gold); margin-bottom:10px; font-size:14px;">⚡ PLAYER REGISTRATION</h3>
-                <input type="text" id="scanTeam" placeholder="TEAM NAME" class="input-field">
-                <button class="btn-gold" onclick="openScanner()">START AADHAAR SCAN</button>
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; gap:10px;">
+                <input type="text" id="tA" placeholder="TEAM A" class="input-field" style="text-align:center;">
+                <input type="text" id="tB" placeholder="TEAM B" class="input-field" style="text-align:center;">
             </div>
-            <div id="squadList"></div>
+            <button class="btn-gold mgmt-only" onclick="alert('Result Saved to Local Storage')">SAVE SCORE</button>
+        </div>
+        <div class="card owner-only" style="border: 1px solid var(--jeeva-red);">
+            <p style="font-size:9px; color:var(--jeeva-red); font-weight:900;">ADMIN FINANCIAL LEDGER</p>
+            <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                <span>FUNDS:</span>
+                <span style="color:var(--neon);">₹ 0.00</span>
+            </div>
         </div>
     </div>
 
+    <div id="scannerTab" class="section">
+        <div class="card">
+            <h3 style="color:var(--afc-gold); margin-bottom:10px; font-size:14px;">⚡ PLAYER REGISTRATION</h3>
+            <input type="text" id="scanTeam" placeholder="TEAM NAME" class="input-field">
+            <button class="btn-gold" onclick="openScanner()">SCAN AADHAAR</button>
+        </div>
+        <div id="squadList"></div>
+    </div>
+
     <div class="bottom-nav">
-        <button class="nav-item" onclick="showTab('match')">MATCH</button>
-        <button class="nav-item mgmt-only" onclick="showTab('scanner')">SCANNER</button>
+        <button class="nav-item active-nav" onclick="showTab('match', this)">MATCH</button>
+        <button class="nav-item mgmt-only" onclick="showTab('scanner', this)">SCANNER</button>
         <button class="nav-item" onclick="location.reload()">LOGOUT</button>
     </div>
 </div>
@@ -126,8 +124,7 @@
     <video id="videoPreview" autoplay playsinline></video>
     <div style="padding:20px; text-align:center; background:#000;">
         <div id="scanCount" style="font-family:'Bebas Neue'; font-size:40px; color:var(--neon);">0 / 10</div>
-        <p style="font-size:10px; color:#555;">SCAN QR ON AADHAAR CARD</p>
-        <button class="btn-gold" style="background:white; margin-top:10px;" onclick="closeScanner()">FINISH TEAM</button>
+        <button class="btn-gold" style="background:white; margin-top:10px;" onclick="closeScanner()">FINISH</button>
     </div>
     <canvas id="hiddenCanvas" style="display:none;"></canvas>
 </div>
@@ -149,7 +146,7 @@
         if (role === 'owner' && pin === '190107') launchHub('owner');
         else if (role === 'mgmt' && pin === '111000') launchHub('mgmt');
         else if (role === 'guest' && pin === '2026') launchHub('guest');
-        else alert("ACCESS DENIED: INVALID PIN");
+        else alert("ACCESS DENIED");
     }
 
     function launchHub(role) {
@@ -162,19 +159,20 @@
             document.querySelectorAll('.mgmt-only').forEach(e => e.style.display = 'block');
             if(role === 'owner') document.querySelectorAll('.owner-only').forEach(e => e.style.display = 'block');
         } else {
-            badge.innerHTML = `<span class="role-badge" style="background:#333;color:#aaa;">GUEST (VIEW ONLY)</span>`;
+            badge.innerHTML = `<span class="role-badge" style="background:#333;color:#aaa;">GUEST ACCESS</span>`;
             document.querySelectorAll('input').forEach(i => i.readOnly = true);
         }
     }
 
-    function showTab(tab) {
-        document.getElementById('matchTab').style.display = (tab === 'match') ? 'block' : 'none';
-        document.getElementById('scannerTab').style.display = (tab === 'scanner') ? 'block' : 'none';
+    function showTab(tabId, el) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+        document.getElementById(tabId + 'Tab').classList.add('active-section');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+        el.classList.add('active-nav');
     }
 
-    // --- SCANNER SYSTEM (5+5 LOGIC) ---
     function openScanner() {
-        if(!document.getElementById('scanTeam').value) return alert("Enter team name first");
+        if(!document.getElementById('scanTeam').value) return alert("Enter team name");
         document.getElementById('scannerOverlay').style.display = 'flex';
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
             videoStream = stream; document.getElementById('videoPreview').srcObject = stream;
@@ -196,17 +194,23 @@
 
     function processQR(data) {
         try {
-            const name = data.match(/name="([^"]+)"/)[1];
-            const dob = data.match(/dob="([^"]+)"/)[1];
-            const yr = parseInt(dob.split('-')[0]) || parseInt(dob.split('/')[2]);
+            // Flexible regex to catch Aadhaar data correctly
+            const nameMatch = data.match(/name="([^"]+)"/) || data.match(/n="([^"]+)"/);
+            const dobMatch = data.match(/dob="([^"]+)"/) || data.match(/d="([^"]+)"/);
+            
+            if(!nameMatch || !dobMatch) return;
+            
+            const name = nameMatch[1];
+            const dob = dobMatch[1];
+            const yr = parseInt(dob.split(/[-/]/).pop()); // Correctly gets the year from YYYY-MM-DD or DD/MM/YYYY
+            
             const team = document.getElementById('scanTeam').value.toUpperCase();
             
-            // Age Verification
-            if(activeTourney === 'U16' && yr < 2010) return alert("PLAYER TOO OLD FOR U16 (LIMIT 2010)");
-            if(activeTourney === 'U19' && yr < 2007) return alert("PLAYER TOO OLD FOR U19 (LIMIT 2007)");
+            if(activeTourney === 'U16' && yr < 2010) return alert("TOO OLD (LIMIT 2010)");
+            if(activeTourney === 'U19' && yr < 2007) return alert("TOO OLD (LIMIT 2007)");
 
             squads[team] = squads[team] || [];
-            if(squads[team].length >= 10) return alert("SQUAD FULL: 10 PLAYERS REACHED");
+            if(squads[team].length >= 10) return alert("SQUAD FULL");
             
             if(!squads[team].find(p => p.name === name)) {
                 squads[team].push({ name, type: squads[team].length < 5 ? "STARTER" : "SUB" });
@@ -221,7 +225,7 @@
         const div = document.getElementById('squadList'); div.innerHTML = "";
         for(let t in squads) {
             let h = `<div class="card"><b style="color:var(--afc-gold)">${t}</b><hr style="opacity:0.1;margin:10px 0;">`;
-            squads[t].forEach((p, i) => h += `<div style="font-size:11px; margin-bottom:4px;">${i+1}. ${p.name} <span style="opacity:0.5">[${p.type}]</span></div>`);
+            squads[t].forEach((p, i) => h += `<div style="font-size:11px; margin-bottom:4px;">${i+1}. ${p.name} [${p.type}]</div>`);
             div.innerHTML += h + "</div>";
         }
     }
