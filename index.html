@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APL Elite Hub v70</title>
+    <title>APL Authority v73 (Elite)</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
@@ -15,42 +15,38 @@
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; background: var(--afc-black); color: white; min-height: 100vh; overflow-x: hidden; }
 
-        /* --- SCREEN SYSTEM --- */
         .screen { display: none; min-height: 100vh; animation: fadeIn 0.3s ease; }
         .screen.active { display: flex; flex-direction: column; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- LOGIN --- */
-        #loginPage { align-items: center; justify-content: center; text-align: center; padding: 20px; background: #000; }
-        .card { background: var(--glass); border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 320px; }
-        .btn-gold { width: 100%; padding: 16px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
-        .input-field { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--afc-gold); color: white; border-radius: 8px; margin-bottom: 10px; }
-
-        /* --- SIDEBAR (SCORE7 STYLE) --- */
+        /* --- SIDEBAR --- */
         #sidebar { 
             position: fixed; left: calc(-1 * var(--sidebar-width)); top: 0; width: var(--sidebar-width); height: 100%; 
-            background: #121212; z-index: 3000; transition: 0.3s ease-out; 
-            border-right: 1px solid #333; padding: 25px 15px; display: flex; flex-direction: column;
+            background: #121212; z-index: 3000; transition: 0.3s ease-out; border-right: 1px solid #333; padding: 25px 15px; display: flex; flex-direction: column;
         }
         #sidebar.open { left: 0; }
         .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2999; }
         .sidebar-overlay.active { display: block; }
-
         .menu-header { font-family: 'Bebas Neue'; color: var(--afc-gold); font-size: 32px; margin-bottom: 25px; letter-spacing: 2px; }
         .menu-item { padding: 14px 12px; color: #999; display: flex; align-items: center; gap: 14px; cursor: pointer; border-radius: 10px; margin-bottom: 4px; transition: 0.2s; font-size: 14px; }
-        .menu-item:active, .menu-item.active { background: #1a3a2a; color: #4ade80; } /* Score7 Green Tint */
-        .menu-label { text-transform: uppercase; font-size: 10px; color: #444; font-weight: 900; margin: 25px 0 10px 12px; letter-spacing: 1.5px; }
+        .menu-item.active { background: rgba(197, 160, 89, 0.15); color: var(--afc-gold); } 
 
-        .sidebar-footer { margin-top: auto; padding-top: 20px; }
-        .btn-footer { border: 1px solid #333; border-radius: 12px; padding: 14px; text-align: center; color: #fff; font-size: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; }
+        /* --- CARDS & UI --- */
+        .card { background: var(--glass); border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 450px; margin: 10px auto; }
+        .btn-gold { width: 100%; padding: 16px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .input-field { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--afc-gold); color: white; border-radius: 8px; margin-bottom: 10px; }
 
-        /* --- MAIN HUB --- */
-        header { background: #0a0a0a; padding: 18px; display: flex; align-items: center; border-bottom: 1px solid #222; }
-        .section { padding: 20px; max-width: 600px; margin: auto; width: 100%; display: none; }
+        header { background: #0a0a0a; padding: 18px; display: flex; align-items: center; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; }
+        .section { padding: 20px; width: 100%; display: none; }
         .active-section { display: block; }
 
-        .stat-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
-        .mgmt-only { display: none; }
+        /* --- PENALTY TRACKER --- */
+        .penalty-row { display: flex; justify-content: center; gap: 8px; margin: 15px 0; }
+        .dot { width: 25px; height: 25px; border-radius: 50%; border: 2px solid #444; }
+        .dot.goal { background: #2ecc71; border-color: #2ecc71; }
+        .dot.miss { background: #e74c3c; border-color: #e74c3c; }
+
+        .mgmt-only, .owner-only { display: none; }
     </style>
 </head>
 <body>
@@ -58,96 +54,98 @@
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav id="sidebar">
-    <div class="menu-header">Score7 APL</div>
-
-    <div class="menu-item active" onclick="showSection('overview')">🖼️ Overview</div>
-    <div class="menu-item" onclick="showSection('teams')">👥 Teams</div>
-    <div class="menu-item" onclick="showSection('matches')">🗓️ Matches</div>
-    <div class="menu-item" onclick="showSection('stats')">📊 Stats</div>
-
-    <div class="menu-label">ADMIN</div>
-    <div class="menu-item mgmt-only" onclick="showSection('scanner')">📝 Registrations</div>
-    <div class="menu-item mgmt-only" onclick="alert('Scheduler Unlocked')">📅 Scheduler</div>
+    <div class="menu-header">APL MASTER</div>
+    <div class="menu-item active" id="mi-overview" onclick="showSection('overview')">🖼️ Dashboard</div>
+    <div class="menu-item" id="mi-teams" onclick="showSection('teams')">👥 Squad List</div>
+    <div class="menu-item" id="mi-matches" onclick="showSection('matches')">🗓️ Match Hub</div>
+    <div class="menu-item mgmt-only" id="mi-penalty" onclick="showSection('penalty')">⚽ Penalty Mode</div>
+    <div class="menu-item mgmt-only" id="mi-scanner" onclick="showSection('scanner')">📝 Registrar</div>
+    <div class="menu-item owner-only" id="mi-finance" onclick="showSection('finance')">💰 Ledger</div>
     <div class="menu-item" onclick="location.reload()">🔐 Logout</div>
-
-    <div class="sidebar-footer">
-        <div class="btn-footer" style="background: #111;" onclick="toggleTVMode()">📺 TV Mode</div>
-        <div class="btn-footer" style="background: var(--afc-gold); color: #000; border: none;" onclick="alert('Link Copied')">🔗 Share</div>
-    </div>
 </nav>
 
 <div id="loginPage" class="screen active">
-    <h1 style="font-family:'Bebas Neue'; color:var(--afc-gold); letter-spacing:3px; margin-bottom:25px; font-size: 40px;">APL MASTER HUB</h1>
-    <div class="card">
+    <div class="card" style="text-align: center; margin-top: 100px;">
+        <h1 style="font-family:'Bebas Neue'; color:var(--afc-gold); font-size: 40px; margin-bottom: 20px;">AUTHORIZE</h1>
         <select id="roleSelect" class="input-field">
             <option value="owner">MASTER ADMIN</option>
-            <option value="mgmt">MANAGEMENT</option>
-            <option value="guest">GUEST ACCESS</option>
+            <option value="mgmt">OFFICIALS</option>
+            <option value="guest">GUEST</option>
         </select>
-        <input type="password" id="pinInput" placeholder="ENTER PIN" class="input-field" style="text-align:center;">
-        <button class="btn-gold" onclick="verifyLogin()">ENTER AUTHORITY</button>
+        <input type="password" id="pinInput" placeholder="PIN" class="input-field" style="text-align:center;">
+        <button class="btn-gold" onclick="verifyLogin()">ENTER HUB</button>
     </div>
 </div>
 
 <div id="hubPage" class="screen">
     <header>
         <span style="font-size: 24px; cursor: pointer; color: var(--afc-gold);" onclick="toggleSidebar()">☰</span>
-        <div style="flex: 1; text-align: center; font-family: 'Bebas Neue'; letter-spacing: 2px; font-size: 20px;" id="headerTitle">OVERVIEW</div>
-        <span style="font-size: 9px; background: var(--admin-red); padding: 3px 8px; border-radius: 5px; font-weight: 900;">U16</span>
+        <div style="flex: 1; text-align: center; font-family: 'Bebas Neue'; letter-spacing: 2px;" id="headerTitle">DASHBOARD</div>
+        <span style="font-size: 9px; background: var(--admin-red); padding: 3px 8px; border-radius: 5px;">U16</span>
     </header>
 
-    <main id="mainContent">
-        <section id="overviewSection" class="section active-section">
-            <div class="card" style="text-align: center; border-color: var(--neon);">
-                <p style="font-size: 10px; color: var(--neon); margin-bottom: 10px;">LIVE GAME CLOCK</p>
-                <h2 id="timeDisp" style="font-family:'Bebas Neue'; font-size:85px; color:white; line-height: 1;">08:00</h2>
-            </div>
-            <div class="mgmt-only" style="margin-top: 15px;">
-                <button class="btn-gold" onclick="ctrlTimer()" id="timerBtn">START MATCH</button>
-            </div>
-        </section>
+    <section id="overviewSection" class="section active-section">
+        <div class="card" style="text-align:center; border-color:var(--neon);">
+            <p style="font-size:10px; color:var(--neon);">MATCH TIME</p>
+            <h2 id="timeDisp" style="font-family:'Bebas Neue'; font-size:80px;">08:00</h2>
+            <button class="btn-gold mgmt-only" onclick="ctrlTimer()" id="timerBtn">START SESSION</button>
+        </div>
+    </section>
 
-        <section id="teamsSection" class="section">
-            <div id="squadList"></div>
-        </section>
-
-        <section id="matchesSection" class="section">
-            <div class="card">
-                <input type="text" id="tA" placeholder="TEAM A" class="input-field">
-                <input type="text" id="tB" placeholder="TEAM B" class="input-field">
-                <button class="btn-gold mgmt-only" onclick="alert('Match Logged')">LOG RESULT</button>
+    <section id="penaltySection" class="section">
+        <div class="card">
+            <h3>PENALTY SHOOTOUT</h3>
+            <div id="pTeamA">TEAM 1</div>
+            <div class="penalty-row" id="rowA">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-        </section>
-
-        <section id="statsSection" class="section">
-            <div class="card">
-                <h3 style="color: var(--afc-gold); font-family: 'Bebas Neue';">TOP SCORERS</h3>
-                <div id="topScorerList"></div>
+            <div id="pTeamB">TEAM 2</div>
+            <div class="penalty-row" id="rowB">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
-        </section>
+            <button class="btn-gold" style="background:#2ecc71; margin-bottom:10px;" onclick="logPenalty(true)">GOAL</button>
+            <button class="btn-gold" style="background:#e74c3c;" onclick="logPenalty(false)">MISS</button>
+        </div>
+    </section>
 
-        <section id="scannerSection" class="section">
-            <div class="card">
-                <p style="margin-bottom: 15px; font-size: 12px;">SCAN AADHAAR (U16 ONLY)</p>
-                <input type="text" id="scanTeam" placeholder="TEAM NAME" class="input-field">
-                <button class="btn-gold" onclick="openScanner()">OPEN CAMERA</button>
+    <section id="financeSection" class="section">
+        <div class="card">
+            <h3 style="color:var(--afc-gold);">FINANCIAL LEDGER</h3>
+            <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                <span>ENTRY FEES:</span><span style="color:#2ecc71;">₹ <span id="rev">0</span></span>
             </div>
-        </section>
-    </main>
+            <div style="display:flex; justify-content:space-between; margin:10px 0;">
+                <span>EXPENSES:</span><span style="color:#e74c3c;">₹ <span id="exp">0</span></span>
+            </div>
+            <hr style="opacity:0.1; margin:15px 0;">
+            <div style="display:flex; justify-content:space-between; font-weight:900;">
+                <span>NET PROFIT:</span><span id="net">₹ 0</span>
+            </div>
+            <button class="btn-gold" style="margin-top:20px; font-size:11px;" onclick="addFinance()">+ ADD ENTRY</button>
+        </div>
+    </section>
+
+    <section id="teamsSection" class="section"><div id="squadList"></div></section>
+    
+    <section id="scannerSection" class="section">
+        <div class="card">
+            <input type="text" id="scanTeam" placeholder="TEAM NAME" class="input-field">
+            <button class="btn-gold" onclick="openScanner()">ACTIVATE CAMERA</button>
+        </div>
+    </section>
 </div>
 
 <div id="scannerOverlay" style="display:none; position: fixed; inset: 0; background: #000; z-index: 5000;">
     <video id="videoPreview" autoplay playsinline style="width: 100%; height: 80vh; object-fit: cover;"></video>
-    <div style="padding: 20px; text-align: center; background: #111;">
-        <div id="scanCount" style="font-family:'Bebas Neue'; font-size: 35px; color: var(--neon);">0 / 10</div>
-        <button class="btn-gold" onclick="closeScanner()" style="background: white;">FINISH TEAM</button>
+    <div style="padding: 20px; text-align: center;">
+        <button class="btn-gold" onclick="closeScanner()" style="background: white;">END SCAN</button>
     </div>
     <canvas id="hiddenCanvas" style="display:none;"></canvas>
 </div>
 
 <script>
-    let currentRole = ''; let sec = 480; let run = null;
-    let squads = {}; let goals = {};
+    let currentRole = ''; let sec = 480; let run = null; let pTurn = 0; let pTeam = 'A';
+    let squads = {}; let finances = { rev: 0, exp: 0 };
 
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('open');
@@ -159,35 +157,50 @@
         document.getElementById(id + 'Section').classList.add('active-section');
         document.getElementById('headerTitle').innerText = id.toUpperCase();
         document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-        if(event.currentTarget.classList) event.currentTarget.classList.add('active');
+        document.getElementById('mi-' + id).classList.add('active');
         toggleSidebar();
     }
 
     function verifyLogin() {
         const pin = document.getElementById('pinInput').value;
         const role = document.getElementById('roleSelect').value;
-        if ((role==='owner' && pin==='190107') || (role==='mgmt' && pin==='111000') || (role==='guest' && pin==='2026')) {
+        const auth = { owner: '190107', mgmt: '111000', guest: '2026' };
+        if (auth[role] === pin) {
             currentRole = role;
             document.getElementById('loginPage').classList.remove('active');
             document.getElementById('hubPage').classList.add('active');
-            if(role !== 'guest') document.querySelectorAll('.mgmt-only').forEach(e => e.style.display = 'block');
-        } else { alert("ACCESS DENIED"); }
+            if(role !== 'guest') document.querySelectorAll('.mgmt-only').forEach(e => e.style.display = 'flex');
+            if(role === 'owner') document.querySelectorAll('.owner-only').forEach(e => e.style.display = 'flex');
+        } else { alert("WRONG PIN"); }
     }
 
     function ctrlTimer() {
         const btn = document.getElementById('timerBtn');
-        if(run) { clearInterval(run); run = null; btn.innerText = "START MATCH"; }
+        if(run) { clearInterval(run); run = null; btn.innerText = "START SESSION"; }
         else { btn.innerText = "PAUSE"; run = setInterval(() => { 
             sec--; let m=Math.floor(sec/60), s=sec%60;
             document.getElementById('timeDisp').innerText = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
-            if(sec<=0) clearInterval(run);
         }, 1000); }
     }
 
-    function toggleTVMode() {
-        const main = document.getElementById('mainContent');
-        main.style.transform = (main.style.transform === 'scale(1.5)') ? 'scale(1)' : 'scale(1.5)';
-        alert("TV MODE ACTIVATED");
+    function logPenalty(isGoal) {
+        const row = document.getElementById('row' + pTeam);
+        const dots = row.querySelectorAll('.dot');
+        if (pTurn < 5) {
+            dots[pTurn].classList.add(isGoal ? 'goal' : 'miss');
+            if (pTeam === 'A') { pTeam = 'B'; } 
+            else { pTeam = 'A'; pTurn++; }
+        } else { alert("Shootout Complete"); }
+    }
+
+    function addFinance() {
+        const type = prompt("Type: 'R' for Revenue, 'E' for Expense");
+        const amt = parseInt(prompt("Amount:"));
+        if (type.toUpperCase() === 'R') finances.rev += amt;
+        else finances.exp += amt;
+        document.getElementById('rev').innerText = finances.rev;
+        document.getElementById('exp').innerText = finances.exp;
+        document.getElementById('net').innerText = "₹ " + (finances.rev - finances.exp);
     }
 
     function openScanner() {
@@ -196,7 +209,7 @@
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
             document.getElementById('videoPreview').srcObject = stream;
             requestAnimationFrame(scanTick);
-        });
+        }).catch(() => alert("Camera Denied"));
     }
 
     function scanTick() {
@@ -207,37 +220,17 @@
             const ctx = canvas.getContext('2d'); ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
             const code = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
             if(code) {
-                const n = code.data.match(/name="([^"]+)"/) || code.data.match(/n="([^"]+)"/);
                 const d = code.data.match(/dob="([^"]+)"/) || code.data.match(/d="([^"]+)"/);
-                if(n && d) {
-                    const yr = parseInt(d[1].split(/[-/]/).pop());
-                    if(yr < 2010) return alert("REJECTED: OVERAGE");
-                    const t = document.getElementById('scanTeam').value.toUpperCase();
-                    squads[t] = squads[t] || [];
-                    if(squads[t].length < 10 && !squads[t].find(p => p.name === n[1])) {
-                        squads[t].push({ name: n[1] });
-                        document.getElementById('scanCount').innerText = squads[t].length + " / 10";
-                        renderSquads();
-                    }
-                }
+                if(d && parseInt(d[1].split(/[-/]/).pop()) < 2010) return alert("OVERAGE");
+                const t = document.getElementById('scanTeam').value.toUpperCase();
+                squads[t] = squads[t] || [];
+                if(squads[t].length < 10) squads[t].push({ name: "Verified Player" });
+                alert("Player Verified");
             }
             requestAnimationFrame(scanTick);
         }
     }
 
-    function renderSquads() {
-        const div = document.getElementById('squadList'); div.innerHTML = "";
-        for(let t in squads) {
-            let h = `<div class="card"><b style="color:var(--afc-gold)">${t}</b><hr style="opacity:0.1;margin:10px 0;">`;
-            squads[t].forEach((p, i) => h += `<div class="stat-row"><span>${p.name}</span> <span onclick="addGoal('${p.name}')" style="color:var(--neon); font-size:10px; font-weight:900;">+ GOAL</span></div>`);
-            div.innerHTML += h + "</div>";
-        }
-    }
-
-    function addGoal(p) { goals[p] = (goals[p] || 0) + 1; renderStats(); }
-    function renderStats() {
-        document.getElementById('topScorerList').innerHTML = Object.keys(goals).sort((a,b)=>goals[b]-goals[a]).map(p=>`<div class="stat-row"><span>${p}</span><span style="color:var(--afc-gold)">${goals[p]}</span></div>`).join("");
-    }
     function closeScanner() { 
         const stream = document.getElementById('videoPreview').srcObject;
         if(stream) stream.getTracks().forEach(t => t.stop());
