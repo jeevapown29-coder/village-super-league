@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APL Authority v73 (Elite)</title>
+    <title>APL Elite Authority Hub v76</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
@@ -15,11 +15,11 @@
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Montserrat', sans-serif; background: var(--afc-black); color: white; min-height: 100vh; overflow-x: hidden; }
 
+        /* --- UI COMPONENTS --- */
         .screen { display: none; min-height: 100vh; animation: fadeIn 0.3s ease; }
         .screen.active { display: flex; flex-direction: column; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- SIDEBAR --- */
         #sidebar { 
             position: fixed; left: calc(-1 * var(--sidebar-width)); top: 0; width: var(--sidebar-width); height: 100%; 
             background: #121212; z-index: 3000; transition: 0.3s ease-out; border-right: 1px solid #333; padding: 25px 15px; display: flex; flex-direction: column;
@@ -27,25 +27,21 @@
         #sidebar.open { left: 0; }
         .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2999; }
         .sidebar-overlay.active { display: block; }
-        .menu-header { font-family: 'Bebas Neue'; color: var(--afc-gold); font-size: 32px; margin-bottom: 25px; letter-spacing: 2px; }
-        .menu-item { padding: 14px 12px; color: #999; display: flex; align-items: center; gap: 14px; cursor: pointer; border-radius: 10px; margin-bottom: 4px; transition: 0.2s; font-size: 14px; }
-        .menu-item.active { background: rgba(197, 160, 89, 0.15); color: var(--afc-gold); } 
 
-        /* --- CARDS & UI --- */
-        .card { background: var(--glass); border-radius: 20px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 450px; margin: 10px auto; }
-        .btn-gold { width: 100%; padding: 16px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .menu-header { font-family: 'Bebas Neue'; color: var(--afc-gold); font-size: 32px; margin-bottom: 25px; }
+        .menu-item { padding: 14px 12px; color: #999; display: flex; align-items: center; gap: 14px; cursor: pointer; border-radius: 10px; margin-bottom: 4px; font-size: 14px; }
+        .menu-item.active { background: rgba(197, 160, 89, 0.15); color: var(--afc-gold); }
+
+        .card { background: var(--glass); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 450px; margin: 10px auto; }
+        .btn-gold { width: 100%; padding: 16px; background: var(--afc-gold); color: black; border: none; border-radius: 12px; font-weight: 900; text-transform: uppercase; cursor: pointer; }
         .input-field { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--afc-gold); color: white; border-radius: 8px; margin-bottom: 10px; }
 
         header { background: #0a0a0a; padding: 18px; display: flex; align-items: center; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 1000; }
         .section { padding: 20px; width: 100%; display: none; }
         .active-section { display: block; }
 
-        /* --- PENALTY TRACKER --- */
-        .penalty-row { display: flex; justify-content: center; gap: 8px; margin: 15px 0; }
-        .dot { width: 25px; height: 25px; border-radius: 50%; border: 2px solid #444; }
-        .dot.goal { background: #2ecc71; border-color: #2ecc71; }
-        .dot.miss { background: #e74c3c; border-color: #e74c3c; }
-
+        .stat-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        .timeline-item { font-size: 11px; color: var(--neon); padding: 5px 0; border-left: 2px solid var(--afc-gold); padding-left: 10px; margin-bottom: 5px; }
         .mgmt-only, .owner-only { display: none; }
     </style>
 </head>
@@ -54,18 +50,18 @@
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <nav id="sidebar">
-    <div class="menu-header">APL MASTER</div>
+    <div class="menu-header">APL AUTHORITY</div>
     <div class="menu-item active" id="mi-overview" onclick="showSection('overview')">🖼️ Dashboard</div>
     <div class="menu-item" id="mi-teams" onclick="showSection('teams')">👥 Squad List</div>
     <div class="menu-item" id="mi-matches" onclick="showSection('matches')">🗓️ Match Hub</div>
-    <div class="menu-item mgmt-only" id="mi-penalty" onclick="showSection('penalty')">⚽ Penalty Mode</div>
+    <div class="menu-item" id="mi-stats" onclick="showSection('stats')">📊 Stats & Logs</div>
     <div class="menu-item mgmt-only" id="mi-scanner" onclick="showSection('scanner')">📝 Registrar</div>
-    <div class="menu-item owner-only" id="mi-finance" onclick="showSection('finance')">💰 Ledger</div>
+    <div class="menu-item owner-only" id="mi-ledger" onclick="showSection('ledger')">💰 Accounting</div>
     <div class="menu-item" onclick="location.reload()">🔐 Logout</div>
 </nav>
 
 <div id="loginPage" class="screen active">
-    <div class="card" style="text-align: center; margin-top: 100px;">
+    <div class="card" style="text-align: center; margin-top: 80px;">
         <h1 style="font-family:'Bebas Neue'; color:var(--afc-gold); font-size: 40px; margin-bottom: 20px;">AUTHORIZE</h1>
         <select id="roleSelect" class="input-field">
             <option value="owner">MASTER ADMIN</option>
@@ -81,56 +77,58 @@
     <header>
         <span style="font-size: 24px; cursor: pointer; color: var(--afc-gold);" onclick="toggleSidebar()">☰</span>
         <div style="flex: 1; text-align: center; font-family: 'Bebas Neue'; letter-spacing: 2px;" id="headerTitle">DASHBOARD</div>
-        <span style="font-size: 9px; background: var(--admin-red); padding: 3px 8px; border-radius: 5px;">U16</span>
+        <span style="font-size: 9px; background: var(--admin-red); padding: 3px 8px; border-radius: 5px; font-weight: 900;">U16</span>
     </header>
 
     <section id="overviewSection" class="section active-section">
         <div class="card" style="text-align:center; border-color:var(--neon);">
-            <p style="font-size:10px; color:var(--neon);">MATCH TIME</p>
-            <h2 id="timeDisp" style="font-family:'Bebas Neue'; font-size:80px;">08:00</h2>
-            <button class="btn-gold mgmt-only" onclick="ctrlTimer()" id="timerBtn">START SESSION</button>
+            <h2 id="timeDisp" style="font-family:'Bebas Neue'; font-size:85px;">08:00</h2>
+            <div class="mgmt-only" style="display:flex; gap:10px; margin-top: 15px;">
+                <button class="btn-gold" onclick="ctrlTimer()" id="timerBtn" style="flex:2;">START</button>
+                <button class="btn-gold" onclick="resetTimer()" style="flex:1; background: #444; color: white;">RESET</button>
+            </div>
         </div>
-    </section>
-
-    <section id="penaltySection" class="section">
         <div class="card">
-            <h3>PENALTY SHOOTOUT</h3>
-            <div id="pTeamA">TEAM 1</div>
-            <div class="penalty-row" id="rowA">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-            </div>
-            <div id="pTeamB">TEAM 2</div>
-            <div class="penalty-row" id="rowB">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-            </div>
-            <button class="btn-gold" style="background:#2ecc71; margin-bottom:10px;" onclick="logPenalty(true)">GOAL</button>
-            <button class="btn-gold" style="background:#e74c3c;" onclick="logPenalty(false)">MISS</button>
+            <input type="text" id="tA" placeholder="TEAM A" class="input-field" style="text-align:center;">
+            <input type="text" id="tB" placeholder="TEAM B" class="input-field" style="text-align:center;">
+            <button class="btn-gold mgmt-only" onclick="saveMatch()">SAVE & EXPORT</button>
         </div>
     </section>
 
-    <section id="financeSection" class="section">
+    <section id="statsSection" class="section">
         <div class="card">
-            <h3 style="color:var(--afc-gold);">FINANCIAL LEDGER</h3>
-            <div style="display:flex; justify-content:space-between; margin:10px 0;">
-                <span>ENTRY FEES:</span><span style="color:#2ecc71;">₹ <span id="rev">0</span></span>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin:10px 0;">
-                <span>EXPENSES:</span><span style="color:#e74c3c;">₹ <span id="exp">0</span></span>
-            </div>
-            <hr style="opacity:0.1; margin:15px 0;">
-            <div style="display:flex; justify-content:space-between; font-weight:900;">
-                <span>NET PROFIT:</span><span id="net">₹ 0</span>
-            </div>
-            <button class="btn-gold" style="margin-top:20px; font-size:11px;" onclick="addFinance()">+ ADD ENTRY</button>
+            <h3 style="color:var(--afc-gold); margin-bottom:10px;">TOP SCORERS</h3>
+            <div id="topScorerList"></div>
+        </div>
+        <div class="card">
+            <h3 style="color:var(--afc-gold); margin-bottom:10px;">MATCH LOGS</h3>
+            <div id="timelineList"></div>
         </div>
     </section>
 
-    <section id="teamsSection" class="section"><div id="squadList"></div></section>
-    
+    <section id="teamsSection" class="section">
+        <div id="squadList"></div>
+    </section>
+
+    <section id="ledgerSection" class="section">
+        <div class="card" style="text-align:center; border: 1px solid var(--afc-gold);">
+            <p style="font-size:10px; opacity:0.6;">BALANCE</p>
+            <h1 id="netBalance" style="font-family:'Bebas Neue'; font-size:40px;">₹ 0</h1>
+        </div>
+        <div class="card">
+            <input type="text" id="accDesc" placeholder="Description" class="input-field">
+            <input type="number" id="accAmt" placeholder="Amount" class="input-field">
+            <div style="display:flex; gap:10px;">
+                <button class="btn-gold" style="background:#2ecc71;" onclick="addTransaction('credit')">CREDIT</button>
+                <button class="btn-gold" style="background:#ff4757;" onclick="addTransaction('debit')">DEBIT</button>
+            </div>
+        </div>
+    </section>
+
     <section id="scannerSection" class="section">
         <div class="card">
             <input type="text" id="scanTeam" placeholder="TEAM NAME" class="input-field">
-            <button class="btn-gold" onclick="openScanner()">ACTIVATE CAMERA</button>
+            <button class="btn-gold" onclick="openScanner()">ACTIVATE SCANNER</button>
         </div>
     </section>
 </div>
@@ -138,14 +136,16 @@
 <div id="scannerOverlay" style="display:none; position: fixed; inset: 0; background: #000; z-index: 5000;">
     <video id="videoPreview" autoplay playsinline style="width: 100%; height: 80vh; object-fit: cover;"></video>
     <div style="padding: 20px; text-align: center;">
+        <div id="scanCount" style="font-family:'Bebas Neue'; font-size: 35px; color: var(--neon);">0 / 10</div>
         <button class="btn-gold" onclick="closeScanner()" style="background: white;">END SCAN</button>
     </div>
     <canvas id="hiddenCanvas" style="display:none;"></canvas>
 </div>
 
 <script>
-    let currentRole = ''; let sec = 480; let run = null; let pTurn = 0; let pTeam = 'A';
-    let squads = {}; let finances = { rev: 0, exp: 0 };
+    let currentRole = ''; let sec = 480; let run = null;
+    let squads = {}; let goals = {}; let timeline = [];
+    let ledger = JSON.parse(localStorage.getItem('apl_ledger')) || [];
 
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('open');
@@ -157,7 +157,9 @@
         document.getElementById(id + 'Section').classList.add('active-section');
         document.getElementById('headerTitle').innerText = id.toUpperCase();
         document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-        document.getElementById('mi-' + id).classList.add('active');
+        const mi = document.getElementById('mi-' + id);
+        if(mi) mi.classList.add('active');
+        if(id === 'ledger') renderLedger();
         toggleSidebar();
     }
 
@@ -169,47 +171,46 @@
             currentRole = role;
             document.getElementById('loginPage').classList.remove('active');
             document.getElementById('hubPage').classList.add('active');
-            if(role !== 'guest') document.querySelectorAll('.mgmt-only').forEach(e => e.style.display = 'flex');
-            if(role === 'owner') document.querySelectorAll('.owner-only').forEach(e => e.style.display = 'flex');
+            if(role !== 'guest') document.querySelectorAll('.mgmt-only').forEach(e => e.style.display = 'block');
+            if(role === 'owner') document.querySelectorAll('.owner-only').forEach(e => e.style.display = 'block');
         } else { alert("WRONG PIN"); }
     }
 
     function ctrlTimer() {
         const btn = document.getElementById('timerBtn');
-        if(run) { clearInterval(run); run = null; btn.innerText = "START SESSION"; }
+        if(run) { clearInterval(run); run = null; btn.innerText = "START"; }
         else { btn.innerText = "PAUSE"; run = setInterval(() => { 
-            sec--; let m=Math.floor(sec/60), s=sec%60;
-            document.getElementById('timeDisp').innerText = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
+            if(sec > 0) {
+                sec--; let m=Math.floor(sec/60), s=sec%60;
+                document.getElementById('timeDisp').innerText = `${m<10?'0':''}${m}:${s<10?'0':''}${s}`;
+            } else { clearInterval(run); }
         }, 1000); }
     }
 
-    function logPenalty(isGoal) {
-        const row = document.getElementById('row' + pTeam);
-        const dots = row.querySelectorAll('.dot');
-        if (pTurn < 5) {
-            dots[pTurn].classList.add(isGoal ? 'goal' : 'miss');
-            if (pTeam === 'A') { pTeam = 'B'; } 
-            else { pTeam = 'A'; pTurn++; }
-        } else { alert("Shootout Complete"); }
+    function resetTimer() { clearInterval(run); run = null; sec = 480; document.getElementById('timeDisp').innerText = "08:00"; }
+
+    function addTransaction(type) {
+        const desc = document.getElementById('accDesc').value;
+        const amt = parseFloat(document.getElementById('accAmt').value);
+        if(!desc || !amt) return;
+        ledger.unshift({ desc, amt, type, date: new Date().toLocaleDateString() });
+        localStorage.setItem('apl_ledger', JSON.stringify(ledger));
+        renderLedger();
     }
 
-    function addFinance() {
-        const type = prompt("Type: 'R' for Revenue, 'E' for Expense");
-        const amt = parseInt(prompt("Amount:"));
-        if (type.toUpperCase() === 'R') finances.rev += amt;
-        else finances.exp += amt;
-        document.getElementById('rev').innerText = finances.rev;
-        document.getElementById('exp').innerText = finances.exp;
-        document.getElementById('net').innerText = "₹ " + (finances.rev - finances.exp);
+    function renderLedger() {
+        let total = 0;
+        ledger.forEach(e => total += (e.type === 'credit' ? e.amt : -e.amt));
+        document.getElementById('netBalance').innerText = "₹ " + total;
     }
 
     function openScanner() {
-        if(!document.getElementById('scanTeam').value) return alert("Enter team name");
+        if(!document.getElementById('scanTeam').value) return alert("Enter team");
         document.getElementById('scannerOverlay').style.display = 'block';
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(stream => {
             document.getElementById('videoPreview').srcObject = stream;
             requestAnimationFrame(scanTick);
-        }).catch(() => alert("Camera Denied"));
+        });
     }
 
     function scanTick() {
@@ -220,15 +221,49 @@
             const ctx = canvas.getContext('2d'); ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
             const code = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height);
             if(code) {
+                const n = code.data.match(/name="([^"]+)"/) || code.data.match(/n="([^"]+)"/);
                 const d = code.data.match(/dob="([^"]+)"/) || code.data.match(/d="([^"]+)"/);
-                if(d && parseInt(d[1].split(/[-/]/).pop()) < 2010) return alert("OVERAGE");
-                const t = document.getElementById('scanTeam').value.toUpperCase();
-                squads[t] = squads[t] || [];
-                if(squads[t].length < 10) squads[t].push({ name: "Verified Player" });
-                alert("Player Verified");
+                if(n && d) {
+                    const yr = parseInt(d[1].split(/[-/]/).pop());
+                    if(yr < 2010) return alert("OVERAGE");
+                    const t = document.getElementById('scanTeam').value.toUpperCase();
+                    squads[t] = squads[t] || [];
+                    if(squads[t].length < 10 && !squads[t].find(p => p.name === n[1])) {
+                        squads[t].push({ name: n[1], type: squads[t].length < 5 ? 'STARTER' : 'SUB' });
+                        document.getElementById('scanCount').innerText = squads[t].length + " / 10";
+                        renderSquads();
+                    }
+                }
             }
             requestAnimationFrame(scanTick);
         }
+    }
+
+    function renderSquads() {
+        const div = document.getElementById('squadList'); div.innerHTML = "";
+        for(let t in squads) {
+            let h = `<div class="card"><b style="color:var(--afc-gold)">${t}</b><hr style="opacity:0.1;margin:10px 0;">`;
+            squads[t].forEach((p, i) => h += `<div class="stat-row"><span>${p.name} [${p.type}]</span> <span onclick="addGoal('${t}',${i})" style="color:var(--neon); cursor:pointer;">⚽ GOAL</span></div>`);
+            div.innerHTML += h + "</div>";
+        }
+    }
+
+    function addGoal(team, idx) {
+        const player = squads[team][idx].name;
+        goals[player] = (goals[player] || 0) + 1;
+        timeline.push(`${player} scored at ${document.getElementById('timeDisp').innerText}`);
+        renderStats();
+    }
+
+    function renderStats() {
+        document.getElementById('topScorerList').innerHTML = Object.keys(goals).sort((a,b)=>goals[b]-goals[a]).map(p=>`<div class="stat-row"><span>${p}</span><span>${goals[p]}</span></div>`).join("");
+        document.getElementById('timelineList').innerHTML = timeline.map(t=>`<div class="timeline-item">${t}</div>`).join("");
+    }
+
+    function saveMatch() {
+        const text = `🏆 APL U16 RESULT 🏆\n${document.getElementById('tA').value} vs ${document.getElementById('tB').value}\n\nTime: ${document.getElementById('timeDisp').innerText}`;
+        if(navigator.clipboard) navigator.clipboard.writeText(text);
+        alert("COPIED FOR WHATSAPP:\n" + text);
     }
 
     function closeScanner() { 
